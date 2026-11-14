@@ -22,8 +22,11 @@ public final class OurletItems {
     public static final Supplier<Item> NEEDLE = item("spatial_needle",
         p -> new NeedleItem(p.durability(NeedleItem.DURABILITY).rarity(Rarity.UNCOMMON)));
 
+    public static final Supplier<Item> THIMBLE = item("thimble",
+        p -> new com.ourlet.item.ThimbleItem(p.durability(com.ourlet.item.ThimbleItem.DURABILITY).rarity(Rarity.UNCOMMON)));
+
     /** Couleurs de fil : les deux bouts d'un même pli portent la même couleur. */
-    public static final String[] THREADS = {"rose", "indigo", "saffron", "sage"};
+    public static final String[] THREADS = {"rose", "indigo", "saffron", "sage", "basting"};
 
     @SuppressWarnings("unchecked")
     public static final Supplier<Item>[] THREAD_ITEMS = new Supplier[THREADS.length];
@@ -50,6 +53,7 @@ public final class OurletItems {
     public static void onCreativeTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(new ItemStack(NEEDLE.get()));
+            event.accept(new ItemStack(THIMBLE.get()));
         }
     }
 

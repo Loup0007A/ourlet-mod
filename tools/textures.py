@@ -31,6 +31,7 @@ THREADS = {
     'indigo': ((84, 88, 194), (150, 156, 236), (44, 42, 120)),
     'saffron': ((240, 169, 46), (252, 214, 120), (166, 98, 20)),
     'sage': ((127, 174, 136), (184, 220, 186), (70, 110, 80)),
+    'basting': ((246, 242, 228), (255, 255, 255), (120, 108, 92)),
 }
 
 
@@ -72,6 +73,38 @@ def needle():
         px[x, y] = rgba(rose_l if i % 3 == 1 else rose)
     for (x, y) in ((13, 14), (14, 14), (13, 15)):
         px[x, y] = rgba(rose_d)
+    return img
+
+
+def thimble():
+    """Le dé à coudre : laiton, piqué de petites alvéoles, un bourrelet en bas."""
+    img = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    rows = {3: (6, 9), 4: (5, 10), 5: (4, 11), 6: (4, 11), 7: (4, 11), 8: (3, 12), 9: (3, 12), 10: (3, 12), 11: (3, 12),
+            12: (2, 13), 13: (2, 13)}
+    for y, (x0, x1) in rows.items():
+        for x in range(x0, x1 + 1):
+            c = BRASS
+            if x <= x0 + 1:
+                c = BRASS_L
+            elif x >= x1 - 1:
+                c = BRASS_D
+            if y >= 12:
+                c = BRASS_L if y == 12 else BRASS_D
+            elif (x + y) % 2 == 0 and x0 + 1 < x < x1 - 1 and y > 3:
+                c = BRASS_D if c == BRASS else c
+            px[x, y] = rgba(c)
+    for y, (x0, x1) in rows.items():
+        for x in (x0 - 1, x1 + 1):
+            if 0 <= x < 16:
+                px[x, y] = rgba(INK, 230)
+    for x in range(6, 10):
+        px[x, 2] = rgba(INK, 230)
+    for x in range(2, 14):
+        px[x, 14] = rgba(INK, 230)
+    # un brin de fil de bâti
+    for (x, y) in ((12, 5), (13, 4), (14, 4), (15, 5)):
+        px[x, y] = rgba((246, 242, 228))
     return img
 
 
@@ -232,6 +265,7 @@ def save(img, path):
 
 if __name__ == '__main__':
     save(needle(), os.path.join(TEX, 'spatial_needle.png'))
+    save(thimble(), os.path.join(TEX, 'thimble.png'))
     for name in THREADS:
         save(seam(name), os.path.join(TEX, f'seam_{name}.png'))
         with open(os.path.join(TEX, f'seam_{name}.png.mcmeta'), 'w') as f:

@@ -12,7 +12,7 @@ public final class Effects {
     private Effects() {}
 
     /** Rose, indigo, safran, sauge : les couleurs des fils, comme sur un canevas. */
-    public static final int[] THREAD_RGB = {0xE07A95, 0x5458C2, 0xF0A92E, 0x7FAE88};
+    public static final int[] THREAD_RGB = {0xE07A95, 0x5458C2, 0xF0A92E, 0x7FAE88, 0xF4EEDC};
     private static final int LINEN = 0xEDE3CF;
 
     private static ParticleOptions thread(int color, float size) {
@@ -52,8 +52,9 @@ public final class Effects {
     }
 
     /** De temps en temps, un brin de fil s'échappe de la couture. */
-    public static void idle(ServerLevel level, Fold f) {
+    public static void idle(ServerLevel level, Fold f, String dim) {
         for (Anchor a : new Anchor[]{f.a, f.b}) {
+            if (!a.dim().equals(dim)) continue;
             Vec3 c = a.center();
             if (level.getNearestPlayer(c.x, c.y, c.z, 24, false) == null) continue;
             Vec3 o = c.add(a.normal().scale(0.08)).add(a.upVec().scale(level.getRandom().nextDouble() - 0.5))
@@ -62,13 +63,27 @@ public final class Effects {
         }
     }
 
+    /** Le pli se ferme (redstone) ou se rouvre : le fil se tend ou se relâche. */
+    public static void tighten(ServerLevel level, Anchor a, int color, boolean closing) {
+        border(level, a, thread(color, 0.8f), 3, 0.06);
+        Folds.playAt(level, a, closing ? SoundEvents.WOOL_PLACE : SoundEvents.WOOL_STEP, 0.7f, closing ? 0.6f : 1.4f);
+    }
+
+    /** Les ciseaux changent le sens du pli. */
+    public static void snip(ServerLevel level, Anchor a, int color) {
+        border(level, a, thread(color, 0.9f), 4, 0.06);
+        Folds.playAt(level, a, SoundEvents.SHEEP_SHEAR, 0.8f, 1.5f);
+    }
+
     public static void pending(ServerLevel level, Anchor a) {
         border(level, a, Compat.dust(LINEN, 0.9f), 3, 0.05);
     }
 
-    public static void transit(ServerLevel level, Anchor from, Anchor to, int color, double size) {
+    public static void transit(Anchor from, Anchor to, int color, double size) {
         float vol = (float) Math.min(1.0, 0.35 + size * 0.3);
         for (Anchor a : new Anchor[]{from, to}) {
+            ServerLevel level = Folds.level(a);
+            if (level == null) continue;
             Vec3 c = a.center().add(a.normal().scale(0.2));
             level.sendParticles(thread(color, 0.9f), c.x, c.y, c.z, 10, 0.3, 0.3, 0.3, 0.04);
             Folds.playAt(level, a, SoundEvents.WOOL_BREAK, vol, 1.7f);

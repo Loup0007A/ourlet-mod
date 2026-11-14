@@ -106,6 +106,25 @@ public final class ClientSelfTest {
             look(180f, 10f);
         });
         step("capture de l'autre côté", 20, () -> shot("03_other_side"));
+        step("ouvrir le carnet", 5, () -> {
+            check(com.ourlet.client.CarnetScreen.chapters().size() == 7, "le carnet a 7 chapitres");
+            var sc = new com.ourlet.client.CarnetScreen(0, null);
+            sc.jump(1, 0, 34);
+            com.ourlet.client.ClientCompat.open(sc);
+        });
+        step("capture du carnet (passage)", 20, () -> shot("04_carnet_pass"));
+        step("carnet : à travers le pli", 2, () -> {
+            if (com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen sc) sc.jump(3, 2, 40);
+            check(com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen, "le carnet est ouvert");
+        });
+        step("capture du carnet (relais)", 20, () -> shot("05_carnet_relay"));
+        step("carnet : ciseaux", 2, () -> {
+            if (com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen sc) sc.jump(5, 3, 60);
+        });
+        step("capture du carnet (redstone)", 20, () -> {
+            shot("06_carnet_control");
+        });
+        step("fermer le carnet", 5, () -> com.ourlet.client.ClientCompat.open(null));
         step("fin", 10, () -> {
             Ourlet.LOGGER.info("[CLIENTTEST] RESULT: {}", failures == 0 ? "OK" : "FAIL " + failures);
             mc().stop();

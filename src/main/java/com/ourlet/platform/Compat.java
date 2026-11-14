@@ -136,4 +136,57 @@ public final class Compat {
         var source = server.createCommandSourceStack().withSuppressedOutput();
         server.getCommands().performPrefixedCommand(source, "execute in " + dim(level) + " run " + command);
     }
+
+    /** Fait passer une entité (pas un joueur) dans un autre monde, avec position, vitesse et regard. */
+    public static Entity moveAcross(Entity e, ServerLevel to, net.minecraft.world.phys.Vec3 pos, net.minecraft.world.phys.Vec3 vel,
+                                    float yaw, float pitch) {
+        Entity moved;
+        //#if mc1201
+        //$$ moved = e.changeDimension(to, new net.minecraftforge.common.util.ITeleporter() {
+        //$$     @Override
+        //$$     public net.minecraft.world.level.portal.PortalInfo getPortalInfo(Entity ent, ServerLevel dest,
+        //$$             java.util.function.Function<ServerLevel, net.minecraft.world.level.portal.PortalInfo> def) {
+        //$$         return new net.minecraft.world.level.portal.PortalInfo(pos, vel, yaw, pitch);
+        //$$     }
+        //$$
+        //$$     @Override
+        //$$     public Entity placeEntity(Entity ent, ServerLevel current, ServerLevel dest, float y,
+        //$$                               java.util.function.Function<Boolean, Entity> reposition) {
+        //$$         return reposition.apply(false);
+        //$$     }
+        //$$
+        //$$     @Override
+        //$$     public boolean playTeleportSound(ServerPlayer p, ServerLevel s, ServerLevel d) {
+        //$$         return false;
+        //$$     }
+        //$$ });
+        //#elif mc26
+        //$$ moved = e.teleport(new net.minecraft.world.level.portal.TeleportTransition(to, pos, vel, yaw, pitch,
+        //$$     net.minecraft.world.level.portal.TeleportTransition.DO_NOTHING));
+        //#else
+        moved = e.changeDimension(new net.minecraft.world.level.portal.DimensionTransition(to, pos, vel, yaw, pitch,
+            net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING));
+        //#endif
+        if (moved != null) {
+            moved.setDeltaMovement(vel);
+            moved.setOldPosAndRot();
+            syncMotion(moved);
+        }
+        return moved;
+    }
+
+    /** Casse un bloc d'un autre monde comme le joueur l'aurait cassé (objets selon l'outil, usure de l'outil). */
+    public static boolean destroyElsewhere(ServerPlayer player, ServerLevel level, net.minecraft.core.BlockPos pos) {
+        var state = level.getBlockState(pos);
+        if (state.isAir()) return false;
+        ItemStack tool = player.getMainHandItem();
+        boolean creative = player.isCreative();
+        var be = level.getBlockEntity(pos);
+        if (!creative && player.hasCorrectToolForDrops(state)) {
+            net.minecraft.world.level.block.Block.dropResources(state, level, pos, be, player, tool);
+        }
+        boolean done = level.destroyBlock(pos, false, player);
+        if (done && !creative) tool.mineBlock(level, state, pos, player);
+        return done;
+    }
 }

@@ -17,12 +17,23 @@ Il n'y a ni portail ni nouveau bloc : seulement une couture brodée sur deux blo
    - clic droit sur le mur : tu poses une torche ou tu actionnes un levier **près du filon** ;
    - tu casses le mur : c'est **le minerai d'en face** qui cède, au rythme de sa dureté, et les diamants reviennent par le fil. Le mur, lui, ne casse pas.
 6. **Découdre** — accroupi + clic droit sur une couture. Si l'un des deux blocs disparaît, le pli se déchire.
+7. **Entre les dimensions** — le premier point à la Surface, le second dans le Nether ou l'End : tout passe.
+8. **Le dé à coudre** — accroupi + clic droit sur une face : c'est la maison. Ensuite, clic droit n'importe où
+   (même dans une autre dimension) : un **pli de poche** faufilé vers la maison s'ouvre pendant 20 secondes.
+9. **Ciseaux et redstone** — clic droit sur une couture avec des ciseaux : ouvert → **sens unique** → **fermé**.
+   Un signal de redstone à côté d'un bloc cousu ferme le pli, comme une porte. La couture se resserre quand le pli se ferme.
+
+### Le Carnet de couture
+
+Dans un inventaire, survole l'Aiguille Spatiale ou le Dé à coudre et **maintiens [W]** : le carnet s'ouvre,
+façon *Ponder* de Create. Sept chapitres de maquettes brodées où les vrais objets traversent les plis,
+avec des notes dans la marge, une frise des étapes, pause et navigation (← → ↑ ↓, espace).
 
 | | |
 |---|---|
-| Recette | perle de l'Ender (haut-droite), lingot de fer (centre), ficelle (bas-gauche) |
-| Utilisations | 48 coutures par aiguille |
-| Limite | 12 plis par joueur, dans une même dimension |
+| Aiguille | perle de l'Ender (haut-droite), lingot de fer (centre), ficelle (bas-gauche) — 48 coutures |
+| Dé à coudre | 5 pépites d'or autour d'une perle de l'Ender (`NNN` / `NPN`) — 64 plis de poche |
+| Limite | 12 plis permanents par joueur ; un pli de poche à la fois |
 | Chargement | les deux bouts d'un pli restent chargés : ce qui passe arrive tout de suite |
 | Commande | `/ourlet list` |
 
@@ -50,4 +61,6 @@ lance un vrai serveur et un vrai client de test, publie la release puis envoie l
 
 **English** — *Ourlet* is French for "hem". The Spatial Needle stitches two block faces together: anything that
 touches one comes out of the other with its speed preserved, pistons push blocks through, and you can mine,
-build and flip levers on the far side by aiming at the seam. Recipe: ender pearl, iron ingot, string (diagonal).
+build and flip levers on the far side by aiming at the seam. Folds work across dimensions, the Thimble opens a
+20-second pocket fold back home, shears and redstone make folds one-way or closed, and the Sewing Notebook
+(hold [W] over the needle) is a Ponder-style animated tutorial.

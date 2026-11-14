@@ -12,19 +12,35 @@ import net.minecraft.world.phys.Vec3;
  */
 public final class Fold {
 
+    /** Ouvert dans les deux sens. */
+    public static final int OPEN = 0;
+    /** Sens unique : on n'entre que par A. */
+    public static final int ONLY_A = 1;
+    /** Sens unique : on n'entre que par B. */
+    public static final int ONLY_B = 2;
+    /** Fermé aux ciseaux (la couture reste, rien ne passe). */
+    public static final int CLOSED = 3;
+
+    /** Couleur du fil de bâti (plis de poche, temporaires). */
+    public static final int BASTING = 4;
+
     public final int id;
     public final UUID owner;
-    public final String dimension;
     public final Anchor a;
     public final Anchor b;
     public final int color;
+    /** Mode choisi aux ciseaux. */
+    int mode = OPEN;
+    /** Un des deux blocs reçoit un signal de redstone : le pli est fermé tant que ça dure. */
+    boolean powered;
+    /** Pli de poche (dé à coudre) : il se défait seul à ce tick ; -1 sinon. */
+    long expires = -1;
     /** Vrai si c'est Ourlet qui a forcé le chargement du tronçon de A / de B. */
     boolean forcedA, forcedB;
 
-    Fold(int id, UUID owner, String dimension, Anchor a, Anchor b, int color) {
+    Fold(int id, UUID owner, Anchor a, Anchor b, int color) {
         this.id = id;
         this.owner = owner;
-        this.dimension = dimension;
         this.a = a;
         this.b = b;
         this.color = color;
@@ -38,8 +54,38 @@ public final class Fold {
         return "ourlet_f" + id;
     }
 
-    /** Distance entre les deux bouts, en blocs. */
+    public int mode() {
+        return mode;
+    }
+
+    public boolean powered() {
+        return powered;
+    }
+
+    public boolean temporary() {
+        return expires >= 0;
+    }
+
+    public boolean crossDimension() {
+        return !a.dim().equals(b.dim());
+    }
+
+    /** Peut-on entrer dans le pli par ce bout ? */
+    public boolean canEnter(Anchor end) {
+        if (powered || mode == CLOSED) return false;
+        return mode == OPEN || (mode == ONLY_A && end == a) || (mode == ONLY_B && end == b);
+    }
+
+    /** Taille de la couture visible à ce bout : elle se resserre quand le pli se ferme. */
+    public float scaleAt(Anchor end) {
+        if (powered || mode == CLOSED) return 0.45f;
+        if (mode == OPEN) return 0.998f;
+        return canEnter(end) ? 0.998f : 0.7f;
+    }
+
+    /** Distance entre les deux bouts, en blocs (-1 entre deux dimensions). */
     public int span() {
+        if (crossDimension()) return -1;
         return (int) Math.round(Math.sqrt(a.pos().distSqr(b.pos())));
     }
 
@@ -64,16 +110,17 @@ public final class Fold {
     }
 
     String serialize() {
-        return id + ";" + owner + ";" + dimension + ";" + a.serialize() + ";" + b.serialize() + ";" + color
-            + ";" + forcedA + ";" + forcedB;
+        return id + ";" + owner + ";" + a.dim() + ";" + a.serialize() + ";" + b.serialize() + ";" + color
+            + ";" + forcedA + ";" + forcedB + ";" + mode;
     }
 
     static Fold parse(String line) {
         String[] p = line.split(";");
-        Fold f = new Fold(Integer.parseInt(p[0]), UUID.fromString(p[1]), p[2], Anchor.parse(p[3]), Anchor.parse(p[4]),
+        Fold f = new Fold(Integer.parseInt(p[0]), UUID.fromString(p[1]), Anchor.parse(p[3], p[2]), Anchor.parse(p[4], p[2]),
             Integer.parseInt(p[5]));
         f.forcedA = Boolean.parseBoolean(p[6]);
         f.forcedB = Boolean.parseBoolean(p[7]);
+        if (p.length > 8) f.mode = Integer.parseInt(p[8]);
         return f;
     }
 }

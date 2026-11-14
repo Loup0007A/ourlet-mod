@@ -106,6 +106,7 @@ public final class Transit {
     }
 
     private static void end(ServerLevel level, Fold f, Anchor here, long time) {
+        if (!here.dim().equals(com.ourlet.platform.Compat.dim(level)) || !f.canEnter(here)) return;
         if (!level.isLoaded(here.pos())) return;
         Direction face = here.face();
         AABB block = new AABB(here.pos());
@@ -147,6 +148,8 @@ public final class Transit {
     /** Fait passer {@code e} par le pli. Renvoie faux si la sortie est bouchée. */
     public static boolean pass(ServerLevel level, Fold f, Anchor here, Entity e, Vec3 impactCenter, Vec3 v, long time) {
         Anchor there = f.other(here);
+        ServerLevel to = Folds.level(there);
+        if (to == null) return false;
         AABB bb = e.getBoundingBox();
         double hx = bb.getXsize() / 2, hy = bb.getYsize() / 2, hz = bb.getZsize() / 2;
         Vec3 n2 = there.normal(), u2 = there.upVec(), r2 = there.rightVec();
@@ -161,7 +164,7 @@ public final class Transit {
             for (double dr : side) {
                 Vec3 cand = base.add(u2.scale(du)).add(r2.scale(dr));
                 AABB box = new AABB(cand.x - hx, cand.y - hy, cand.z - hz, cand.x + hx, cand.y + hy, cand.z + hz);
-                if (level.noCollision(e, box)) {
+                if (to.noCollision(e, box)) {
                     spot = cand;
                     break search;
                 }
@@ -184,12 +187,19 @@ public final class Transit {
         CONTACT.put(((long) e.getId() << 21) ^ ((long) f.id << 1) ^ (there == f.a ? 0 : 1), time);
 
         e.resetFallDistance();
+        Entity moved = e;
         if (e instanceof ServerPlayer p) {
-            Compat.teleportPlayer(p, level, x, y, z, yaw, pitch);
+            Compat.teleportPlayer(p, to, x, y, z, yaw, pitch);
             LAST_POS.put(p.getUUID(), new Vec3(x, y, z));
             PLAYER_VEL.put(p.getUUID(), v2);
             p.setDeltaMovement(v2);
             Compat.syncMotion(p);
+        } else if (to != level) {
+            // autre dimension : l'entité est recréée dans l'autre monde, avec sa vitesse
+            moved = Compat.moveAcross(e, to, new Vec3(x, y, z), v2, yaw, pitch);
+            if (moved == null) return false;
+            COOLDOWNS.put(moved.getId(), time + COOLDOWN);
+            CONTACT.put(((long) moved.getId() << 21) ^ ((long) f.id << 1) ^ (there == f.a ? 0 : 1), time);
         } else {
             e.teleportTo(x, y, z);
             e.setYRot(yaw);
@@ -203,8 +213,11 @@ public final class Transit {
             Compat.syncMotion(e);
         }
         passages++;
-        if (com.ourlet.debug.ServerSelfTest.enabled()) TEST_EXITS.put(e.getId(), new Exit(new Vec3(x, y, z), v2));
-        Effects.transit(level, here, there, f.color, bb.getSize());
+        if (com.ourlet.debug.ServerSelfTest.enabled()) {
+            TEST_EXITS.put(e.getId(), new Exit(new Vec3(x, y, z), v2));
+            TEST_EXITS.put(moved.getId(), new Exit(new Vec3(x, y, z), v2));
+        }
+        Effects.transit(here, there, f.color, bb.getSize());
         return true;
     }
 }

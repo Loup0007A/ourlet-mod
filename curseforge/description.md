@@ -27,10 +27,19 @@ The **Spatial Needle** sews the space between two block faces. There's no portal
    - **mine the wall** and *the ore on the other side* gives way, as fast as its hardness allows. The drops come back through the thread. The wall itself never breaks.
 6. **Unpick.** Sneak + right-click a seam. If either block disappears, the fold tears.
 
+7. **Across dimensions.** Tack the first stitch in the Overworld and the second in the Nether or the End. Everything still goes through.
+8. **The Thimble.** Sneak + right-click a face to make it *home*. Later, anywhere you are (even in another dimension), right-click any face to baste a **pocket fold** back home. It lasts 20 seconds.
+9. **Shears & redstone.** Snip a seam with shears to cycle it: open → **one-way** → **closed**. A redstone signal next to a sewn block also closes the fold, like a door, and the seams visibly pull tight.
+
+### The Sewing Notebook (Ponder-style tutorial)
+
+In any inventory, hover the Spatial Needle or the Thimble and **hold [W]**. The notebook opens: 7 chapters of embroidered isometric dioramas where real item icons travel through folds, with margin notes pointing at each part, a step timeline, pause and navigation.
+
 ### Details
 
-- Recipe: ender pearl (top-right), iron ingot (center), string (bottom-left).
-- 48 seams per needle, 12 folds per player, same dimension only.
+- Needle: ender pearl (top-right), iron ingot (center), string (bottom-left). 48 seams.
+- Thimble: 5 gold nuggets around an ender pearl (`NNN` / `NPN`). 64 pocket folds.
+- 12 permanent folds per player, one pocket fold at a time.
 - Both ends of a fold stay loaded, so whatever goes through arrives instantly.
 - Matching thread colors (rose, indigo, saffron, sage) show which seams belong together.
 - Fabric sounds and thread particles, all vanilla, so there's nothing extra to download.
@@ -42,4 +51,4 @@ Forge 1.20.1 · Forge 1.21–1.21.1 · NeoForge 1.21–1.21.1 · NeoForge 26.3. 
 
 ---
 
-**Français** — L'Aiguille Spatiale coud deux faces de blocs. Ce qui touche l'une ressort par l'autre, vitesse comprise. Les pistons y font passer des blocs, et on peut miner, poser et actionner de l'autre côté en visant la couture.
+**Français** — L'Aiguille Spatiale coud deux faces de blocs. Ce qui touche l'une ressort par l'autre, vitesse comprise. Les pistons y font passer des blocs, et on peut miner, poser et actionner de l'autre côté en visant la couture. Les plis traversent les dimensions, le Dé à coudre ouvre un pli de poche vers la maison, les ciseaux et la redstone ferment ou orientent les plis, et le Carnet de couture (maintiens [W]) explique tout en scènes animées.

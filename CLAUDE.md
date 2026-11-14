@@ -16,4 +16,8 @@
 - Les plis sont sauvegardés dans `<monde>/data/ourlet_folds.txt` (texte, identique pour toutes les versions).
 - Géométrie : `fold/Fold.mapVector` / `mapPoint` (rotation propre : normale entrante → normale sortante, haut → haut, droite → −droite).
 - Textures, logo et avatar : `python3 tools/textures.py` (dessinés en code, style broderie).
-- Test en jeu (CI) : `debug/ServerSelfTest` (objet, flèche, piston, relais de minage) et `debug/ClientSelfTest` (captures, traversée).
+- Plis entre dimensions : chaque `Anchor` porte sa dimension ; `Folds.level(anchor)` ; passage d'une entité vers un autre monde par `Compat.moveAcross`.
+- Modes (`Fold.OPEN/ONLY_A/ONLY_B/CLOSED`, ciseaux) et `powered` (redstone) : `Fold.canEnter` ; la taille de la couture (`Fold.scaleAt`) est mise à jour par `Markers.refresh` (`/data merge`).
+- Dé à coudre (`item/ThimbleItem`) : maison par joueur (lignes `H;` du fichier), plis de poche temporaires (`Fold.expires`, couleur `BASTING`, jamais sauvegardés).
+- Carnet de couture (tuto façon Ponder) : scènes générées par `python3 tools/carnet.py` (images + `assets/ourlet/carnet/chapters.json`), écran `client/CarnetScreen`, ouverture « maintenir [W] » dans `client/ClientHooks`. Tout texte de scène = clé `ourlet.carnet.*` dans les deux fichiers de langue. Le client ne doit rien charger côté serveur dédié : tout le code client est inscrit dans `FMLClientSetupEvent`.
+- Test en jeu (CI) : `debug/ServerSelfTest` (objet, flèche, piston, Nether, redstone, sens unique, relais de minage, dé à coudre) et `debug/ClientSelfTest` (captures, traversée, carnet).

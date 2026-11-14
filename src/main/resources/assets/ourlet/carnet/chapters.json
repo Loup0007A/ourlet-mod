@@ -1,0 +1,577 @@
+{
+ "width": 208,
+ "height": 150,
+ "chapters": [
+  {
+   "id": "sew",
+   "icon": "ourlet:spatial_needle",
+   "steps": [
+    {
+     "frame": "sew_0",
+     "text": "ourlet.carnet.sew.1",
+     "ticks": 60,
+     "point": [
+      74.0,
+      62.0
+     ]
+    },
+    {
+     "frame": "sew_1",
+     "text": "ourlet.carnet.sew.2",
+     "ticks": 70,
+     "point": [
+      74.0,
+      62.0
+     ],
+     "items": [
+      {
+       "item": "ourlet:spatial_needle",
+       "path": [
+        [
+         88.0,
+         46.0
+        ],
+        [
+         78.0,
+         58.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "sew_2",
+     "text": "ourlet.carnet.sew.3",
+     "ticks": 80,
+     "point": [
+      146.0,
+      68.0
+     ],
+     "items": [
+      {
+       "item": "ourlet:spatial_needle",
+       "path": [
+        [
+         128.0,
+         54.0
+        ],
+        [
+         140.0,
+         64.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "sew_2",
+     "text": "ourlet.carnet.sew.4",
+     "ticks": 70
+    },
+    {
+     "frame": "sew_2",
+     "text": "ourlet.carnet.sew.5",
+     "ticks": 70,
+     "point": [
+      74.0,
+      62.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pass",
+   "icon": "minecraft:diamond",
+   "steps": [
+    {
+     "frame": "pass_0",
+     "text": "ourlet.carnet.pass.1",
+     "ticks": 80,
+     "point": [
+      68.0,
+      66.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:diamond",
+       "path": [
+        [
+         68.0,
+         20.0
+        ],
+        [
+         68.0,
+         62.0
+        ],
+        null,
+        [
+         158.0,
+         68.0
+        ],
+        [
+         192.0,
+         82.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "pass_0",
+     "text": "ourlet.carnet.pass.2",
+     "ticks": 90,
+     "point": [
+      158.0,
+      68.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:diamond",
+       "path": [
+        [
+         68.0,
+         20.0
+        ],
+        [
+         68.0,
+         62.0
+        ],
+        null,
+        [
+         158.0,
+         68.0
+        ],
+        [
+         192.0,
+         82.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "pass_0",
+     "text": "ourlet.carnet.pass.3",
+     "ticks": 90,
+     "point": [
+      158.0,
+      68.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:arrow",
+       "path": [
+        [
+         204.0,
+         88.0
+        ],
+        [
+         160.0,
+         68.0
+        ],
+        null,
+        [
+         68.0,
+         66.0
+        ],
+        [
+         68.0,
+         16.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "pass_0",
+     "text": "ourlet.carnet.pass.4",
+     "ticks": 70
+    }
+   ]
+  },
+  {
+   "id": "piston",
+   "icon": "minecraft:piston",
+   "steps": [
+    {
+     "frame": "piston_0",
+     "text": "ourlet.carnet.piston.1",
+     "ticks": 70,
+     "point": [
+      86.0,
+      80.0
+     ]
+    },
+    {
+     "frame": "piston_0",
+     "text": "ourlet.carnet.piston.2",
+     "ticks": 70,
+     "point": [
+      62.0,
+      68.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:cobblestone",
+       "path": [
+        [
+         76.0,
+         74.0
+        ],
+        [
+         62.0,
+         68.0
+        ],
+        null,
+        [
+         146.0,
+         68.0
+        ],
+        [
+         138.0,
+         76.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "piston_1",
+     "text": "ourlet.carnet.piston.3",
+     "ticks": 80,
+     "point": [
+      134.0,
+      74.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "relay",
+   "icon": "minecraft:diamond_pickaxe",
+   "steps": [
+    {
+     "frame": "relay_0",
+     "text": "ourlet.carnet.relay.1",
+     "ticks": 70,
+     "point": [
+      74.0,
+      62.0
+     ]
+    },
+    {
+     "frame": "relay_0",
+     "text": "ourlet.carnet.relay.2",
+     "ticks": 80,
+     "point": [
+      128.0,
+      70.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:diamond_pickaxe",
+       "path": [
+        [
+         90.0,
+         52.0
+        ],
+        [
+         80.0,
+         60.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "relay_1",
+     "text": "ourlet.carnet.relay.3",
+     "ticks": 80,
+     "point": [
+      74.0,
+      62.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:diamond",
+       "path": [
+        [
+         128.0,
+         66.0
+        ],
+        [
+         146.0,
+         68.0
+        ],
+        null,
+        [
+         74.0,
+         62.0
+        ],
+        [
+         92.0,
+         72.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "relay_1",
+     "text": "ourlet.carnet.relay.4",
+     "ticks": 80,
+     "point": [
+      74.0,
+      62.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:torch",
+       "path": [
+        [
+         90.0,
+         52.0
+        ],
+        [
+         78.0,
+         60.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "relay_1",
+     "text": "ourlet.carnet.relay.5",
+     "ticks": 70
+    }
+   ]
+  },
+  {
+   "id": "thimble",
+   "icon": "ourlet:thimble",
+   "steps": [
+    {
+     "frame": "thimble_0",
+     "text": "ourlet.carnet.thimble.1",
+     "ticks": 80,
+     "point": [
+      74.0,
+      62.0
+     ],
+     "items": [
+      {
+       "item": "ourlet:thimble",
+       "path": [
+        [
+         88.0,
+         50.0
+        ],
+        [
+         78.0,
+         59.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "thimble_1",
+     "text": "ourlet.carnet.thimble.2",
+     "ticks": 80,
+     "point": [
+      146.0,
+      68.0
+     ],
+     "items": [
+      {
+       "item": "ourlet:thimble",
+       "path": [
+        [
+         130.0,
+         56.0
+        ],
+        [
+         141.0,
+         65.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "thimble_1",
+     "text": "ourlet.carnet.thimble.3",
+     "ticks": 80,
+     "point": [
+      146.0,
+      68.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:ender_pearl",
+       "path": [
+        [
+         120.0,
+         80.0
+        ],
+        [
+         146.0,
+         68.0
+        ],
+        null,
+        [
+         74.0,
+         62.0
+        ],
+        [
+         96.0,
+         72.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "thimble_0",
+     "text": "ourlet.carnet.thimble.4",
+     "ticks": 70,
+     "point": [
+      74.0,
+      62.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "control",
+   "icon": "minecraft:shears",
+   "steps": [
+    {
+     "frame": "control_0",
+     "text": "ourlet.carnet.control.1",
+     "ticks": 70,
+     "point": [
+      74.0,
+      62.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:shears",
+       "path": [
+        [
+         90.0,
+         50.0
+        ],
+        [
+         78.0,
+         59.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "control_1",
+     "text": "ourlet.carnet.control.2",
+     "ticks": 80,
+     "point": [
+      146.0,
+      68.0
+     ]
+    },
+    {
+     "frame": "control_2",
+     "text": "ourlet.carnet.control.3",
+     "ticks": 70,
+     "point": [
+      74.0,
+      62.0
+     ]
+    },
+    {
+     "frame": "control_3",
+     "text": "ourlet.carnet.control.4",
+     "ticks": 80,
+     "point": [
+      56.0,
+      58.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:redstone_block",
+       "path": [
+        [
+         76.0,
+         38.0
+        ],
+        [
+         56.0,
+         52.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "control_0",
+     "text": "ourlet.carnet.control.5",
+     "ticks": 70
+    }
+   ]
+  },
+  {
+   "id": "dimensions",
+   "icon": "minecraft:obsidian",
+   "steps": [
+    {
+     "frame": "dimensions_0",
+     "text": "ourlet.carnet.dimensions.1",
+     "ticks": 80,
+     "point": [
+      74.0,
+      62.0
+     ]
+    },
+    {
+     "frame": "dimensions_0",
+     "text": "ourlet.carnet.dimensions.2",
+     "ticks": 90,
+     "point": [
+      146.0,
+      68.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:gold_ingot",
+       "path": [
+        [
+         128.0,
+         80.0
+        ],
+        [
+         146.0,
+         68.0
+        ],
+        null,
+        [
+         74.0,
+         62.0
+        ],
+        [
+         96.0,
+         72.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "dimensions_0",
+     "text": "ourlet.carnet.dimensions.3",
+     "ticks": 70
+    }
+   ]
+  }
+ ]
+}

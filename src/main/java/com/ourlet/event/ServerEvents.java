@@ -73,6 +73,7 @@ public final class ServerEvents {
     private static void tick() {
         MinecraftServer server = Folds.server();
         if (server == null) return;
+        Folds.tickGlobal();
         for (ServerLevel level : server.getAllLevels()) {
             Transit.trackPlayers(level);
             Folds.tick(level);
@@ -84,13 +85,40 @@ public final class ServerEvents {
     @SubscribeEvent
     public static void onRightClick(PlayerInteractEvent.RightClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer player) || Relay.busy()) return;
-        if (player.getItemInHand(event.getHand()).getItem() instanceof NeedleItem) return;
+        var held = player.getItemInHand(event.getHand()).getItem();
+        if (held instanceof NeedleItem || held instanceof com.ourlet.item.ThimbleItem) return;
         BlockHitResult hit = event.getHitVec();
         Folds.End end = Folds.find(Compat.level(player), hit.getBlockPos(), hit.getDirection());
         if (end == null) return;
+        if (held instanceof net.minecraft.world.item.ShearsItem) {
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+            snip(player, end);
+            return;
+        }
+        if (!end.open()) return; // pli fermé ou à sens unique dans l'autre sens : le bloc redevient un bloc
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.SUCCESS);
         Relay.use(player, event.getHand(), end, hit.getLocation());
+    }
+
+    /** Ciseaux : ouvert → sens unique (on entre par cette face) → fermé → ouvert. */
+    private static void snip(ServerPlayer player, Folds.End end) {
+        Fold f = end.fold();
+        boolean isA = end.here() == f.a;
+        int next = switch (f.mode()) {
+            case Fold.OPEN -> isA ? Fold.ONLY_A : Fold.ONLY_B;
+            case Fold.ONLY_A, Fold.ONLY_B -> Fold.CLOSED;
+            default -> Fold.OPEN;
+        };
+        Folds.setMode(f, next);
+        String key = switch (next) {
+            case Fold.OPEN -> "ourlet.shears.open";
+            case Fold.CLOSED -> "ourlet.shears.closed";
+            default -> "ourlet.shears.one_way";
+        };
+        Compat.actionBar(player, Component.translatable(key));
+        com.ourlet.fold.Effects.snip(Compat.level(player), end.here(), f.color);
     }
 
     /** Casser un bloc cousu par sa face cousue : c'est le bloc d'en face qui cède. */
@@ -106,7 +134,7 @@ public final class ServerEvents {
         BlockHitResult hit = Relay.pick(player);
         if (hit == null || !hit.getBlockPos().equals(event.getPos())) return;
         Folds.End end = Folds.find(Compat.level(player), event.getPos(), hit.getDirection());
-        if (end == null) return;
+        if (end == null || !end.open()) return;
         if (Relay.dig(player, end, hit.getLocation())) event.setCanceled(true);
     }
 
@@ -125,7 +153,7 @@ public final class ServerEvents {
             BlockState s = level.getBlockState(p);
             Folds.End end = Folds.find(level, p, dir.getOpposite());
             if (end != null) {
-                if (last == null) return; // le piston touche directement la couture : rien à faire passer
+                if (last == null || !end.open()) return; // rien à faire passer, ou pli fermé
                 BlockState moved = level.getBlockState(last);
                 //#if mc26
                 //$$ if (moved.hasBlockEntity() || moved.getPistonPushReaction() != PushReaction.PUSH_PULL) return;
@@ -133,14 +161,15 @@ public final class ServerEvents {
                 if (moved.hasBlockEntity() || moved.getPistonPushReaction() != PushReaction.NORMAL) return;
                 //#endif
                 Anchor there = end.there();
+                ServerLevel thereLevel = Folds.level(there);
                 BlockPos out = there.pos().relative(there.face());
-                if (!level.getBlockState(out).canBeReplaced()) {
+                if (thereLevel == null || !thereLevel.getBlockState(out).canBeReplaced()) {
                     event.setCanceled(true); // la sortie est bouchée : le piston bute
                     return;
                 }
                 level.setBlock(last, Blocks.AIR.defaultBlockState(), 3);
-                level.setBlock(out, moved, 3);
-                com.ourlet.fold.Effects.transit(level, end.here(), there, end.fold().color, 1.0);
+                thereLevel.setBlock(out, moved, 3);
+                com.ourlet.fold.Effects.transit(end.here(), there, end.fold().color, 1.0);
                 return;
             }
             if (s.isAir() || s.canBeReplaced()) return;
@@ -161,16 +190,21 @@ public final class ServerEvents {
         Relay.forget(event.getEntity().getUUID());
     }
 
+    private static String where(Anchor a) {
+        String d = a.dim();
+        return a.pos().toShortString() + (d.equals("minecraft:overworld") ? "" : " (" + d.replace("minecraft:", "") + ")");
+    }
+
     @SubscribeEvent
     public static void onCommands(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal("ourlet").then(Commands.literal("list").executes(ctx -> {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             int n = 0;
             for (Fold f : Folds.all()) {
-                if (!f.owner.equals(player.getUUID())) continue;
+                if (!f.owner.equals(player.getUUID()) || f.temporary()) continue;
                 n++;
-                Component line = Component.translatable("ourlet.command.line", f.id, f.a.pos().toShortString(),
-                    f.b.pos().toShortString(), f.span(), Component.translatable("ourlet.thread." + f.color));
+                Component line = Component.translatable("ourlet.command.line", f.id, where(f.a), where(f.b),
+                    Component.translatable("ourlet.thread." + f.color), Component.translatable("ourlet.mode." + f.mode()));
                 ctx.getSource().sendSuccess(() -> line, false);
             }
             final int count = n;

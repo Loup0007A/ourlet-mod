@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.0
+
+- **Carnet de couture** : un tutoriel en scènes animées, à la manière de « Ponder » (Create). Dans un inventaire, survole l'Aiguille Spatiale ou le Dé à coudre et **maintiens [W]**. 7 chapitres de maquettes brodées où les vrais objets traversent les plis, avec bulles, frise des étapes, pause et retour (← → ↑ ↓, espace).
+- **Plis entre dimensions** : le premier point à la Surface, le second dans le Nether ou l'End. Tout passe (entités recréées de l'autre côté avec leur vitesse), et le relais (miner, poser, actionner) fonctionne aussi.
+- **Dé à coudre** (5 pépites d'or + perle de l'Ender) : accroupi + clic droit = la maison ; clic droit n'importe où = un **pli de poche** faufilé vers la maison pendant 20 s (fil de bâti blanc), un seul à la fois. 64 utilisations.
+- **Ciseaux et redstone** : clic droit sur une couture avec des ciseaux = ouvert → **sens unique** (on n'entre que par cette face) → **fermé** → ouvert. Un signal de redstone à côté d'un bloc cousu ferme le pli tant qu'il dure. La couture se resserre (animée) quand le pli se ferme.
+- `/ourlet list` affiche la dimension et le mode de chaque pli.
+
+Sewing Notebook (Ponder-style animated tutorial: hold [W] over the needle or thimble), cross-dimension folds, the Thimble (20-second pocket fold to home), and shears/redstone control (one-way and closed folds).
+
 ## 1.0.0
 
 Première version d'Ourlet.

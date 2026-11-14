@@ -58,4 +58,5 @@ pkill -f "nogui" || true
 wait
 grep -E "\[SELFTEST\]" "$OUT/selftest.log" | tail -20
 grep -q "\[SELFTEST\] RESULT: OK" "$OUT/selftest.log" && grep -q "\[SELFTEST\] RELAY: OK" "$OUT/selftest.log" \
+  && grep -q "\[SELFTEST\] POCKET: OK" "$OUT/selftest.log" \
   && grep -q "\[CLIENTTEST\] RESULT: OK" "$OUT/clienttest.log"

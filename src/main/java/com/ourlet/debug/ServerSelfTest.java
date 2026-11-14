@@ -6,6 +6,7 @@ import com.ourlet.fold.Fold;
 import com.ourlet.fold.Folds;
 import com.ourlet.fold.Markers;
 import com.ourlet.item.NeedleItem;
+import com.ourlet.item.ThimbleItem;
 import com.ourlet.platform.Compat;
 import com.ourlet.registry.OurletItems;
 import java.util.ArrayList;
@@ -53,8 +54,9 @@ public final class ServerSelfTest {
     private static final List<Runnable> LATER = new ArrayList<>();
     private static long laterAt = -1;
     private static int failures;
-    private static boolean startupDone, relayWatch;
-    private static long relayDeadline;
+    private static boolean startupDone, relayWatch, pocketWatch;
+    private static long relayDeadline, pocketDeadline;
+    private static Fold shortPocket;
     private static BlockPos ore, wallA;
     private static int sx, sz;
 
@@ -75,7 +77,7 @@ public final class ServerSelfTest {
     }
 
     private static Anchor anchor(ServerLevel level, BlockPos pos, Direction face, Direction facing) {
-        return new Anchor(pos, face, Anchor.upFor(face, facing), Folds.blockId(level.getBlockState(pos)));
+        return Folds.anchor(level, pos, face, facing);
     }
 
     @SubscribeEvent
@@ -106,14 +108,14 @@ public final class ServerSelfTest {
         BlockPos a1 = new BlockPos(sx + 20, Y, sz), b1 = new BlockPos(sx + 1520, Y, sz);
         set(level, a1.getX(), Y, sz, Blocks.STONE);
         set(level, b1.getX(), Y, sz, Blocks.STONE);
-        Fold f1 = Folds.create(level, TESTER, anchor(level, a1, Direction.UP, Direction.NORTH),
+        Fold f1 = Folds.create(TESTER, anchor(level, a1, Direction.UP, Direction.NORTH),
             anchor(level, b1, Direction.EAST, Direction.NORTH));
 
         // 2. Une flèche file vers un mur cousu et ressort d'un sol, vers le haut.
         BlockPos a2 = new BlockPos(sx + 30, Y, sz), b2 = new BlockPos(sx + 1530, Y + 5, sz);
         set(level, a2.getX(), Y, sz, Blocks.STONE);
         set(level, b2.getX(), b2.getY(), sz, Blocks.STONE);
-        Fold f2 = Folds.create(level, TESTER, anchor(level, a2, Direction.WEST, Direction.NORTH),
+        Fold f2 = Folds.create(TESTER, anchor(level, a2, Direction.WEST, Direction.NORTH),
             anchor(level, b2, Direction.UP, Direction.NORTH));
 
         // 3. Un piston pousse un bloc de pierre taillée contre une couture : il ressort à 1 500 blocs.
@@ -122,11 +124,41 @@ public final class ServerSelfTest {
         set(level, piston.getX() + 1, Y, sz, Blocks.COBBLESTONE);
         set(level, a3.getX(), Y, sz, Blocks.STONE);
         set(level, b3.getX(), Y, sz, Blocks.STONE);
-        Fold f3 = Folds.create(level, TESTER, anchor(level, a3, Direction.WEST, Direction.NORTH),
+        Fold f3 = Folds.create(TESTER, anchor(level, a3, Direction.WEST, Direction.NORTH),
             anchor(level, b3, Direction.NORTH, Direction.NORTH));
         BlockPos out3 = b3.north();
 
-        log(Folds.all().size() == 3, "trois plis cousus");
+        // 4. Entre deux dimensions : un objet tombe dans un sol cousu et ressort d'un mur du Nether.
+        ServerLevel nether = server.getLevel(net.minecraft.world.level.Level.NETHER);
+        BlockPos a4 = new BlockPos(sx + 50, Y, sz), b4 = new BlockPos(8, 100, 8);
+        set(level, a4.getX(), Y, sz, Blocks.STONE);
+        Fold f4 = null;
+        if (nether != null) {
+            for (int dx = -2; dx <= 4; dx++) for (int dy = -1; dy <= 3; dy++) for (int dz = -2; dz <= 2; dz++)
+                set(nether, b4.getX() + dx, b4.getY() + dy, b4.getZ() + dz, dy == -1 ? Blocks.NETHERRACK : Blocks.AIR);
+            set(nether, b4.getX(), b4.getY(), b4.getZ(), Blocks.NETHER_BRICKS);
+            f4 = Folds.create(TESTER, anchor(level, a4, Direction.UP, Direction.NORTH),
+                anchor(nether, b4, Direction.EAST, Direction.NORTH));
+        }
+        // 5. Un pli fermé par la redstone : l'objet reste posé dessus.
+        BlockPos a5 = new BlockPos(sx + 60, Y, sz), b5 = new BlockPos(sx + 1560, Y, sz);
+        set(level, a5.getX(), Y, sz, Blocks.STONE);
+        set(level, b5.getX(), Y, sz, Blocks.STONE);
+        set(level, a5.getX(), Y, sz + 1, Blocks.REDSTONE_BLOCK);
+        Fold f5 = Folds.create(TESTER, anchor(level, a5, Direction.UP, Direction.NORTH),
+            anchor(level, b5, Direction.EAST, Direction.NORTH));
+        // 6. Un pli à sens unique (on n'entre que par B) : l'objet posé sur A reste là.
+        BlockPos a6 = new BlockPos(sx + 70, Y, sz), b6 = new BlockPos(sx + 1570, Y, sz);
+        set(level, a6.getX(), Y, sz, Blocks.STONE);
+        set(level, b6.getX(), Y, sz, Blocks.STONE);
+        Fold f6 = Folds.create(TESTER, anchor(level, a6, Direction.UP, Direction.NORTH),
+            anchor(level, b6, Direction.EAST, Direction.NORTH));
+        Folds.setMode(f6, Fold.ONLY_B);
+        final Fold f4f = f4;
+
+        log(Folds.all().size() == 6 && f4 != null, "six plis cousus, dont un vers le Nether");
+        log(f4 != null && f4.crossDimension(), "le pli 4 relie deux dimensions");
+        log(!f6.canEnter(f6.a) && f6.canEnter(f6.b), "le pli 6 est à sens unique");
         log(Fold.mapVector(f1.a, f1.b, new Vec3(0, -1, 0)).distanceTo(new Vec3(1, 0, 0)) < 1e-6,
             "une chute dans le sol ressort à l'horizontale du mur");
 
@@ -140,6 +172,17 @@ public final class ServerSelfTest {
             boolean added = level.addFreshEntity(arrow);
             Ourlet.LOGGER.info("[SELFTEST] flèche lancée ({})", added);
             set(level, piston.getX(), Y + 1, sz, Blocks.REDSTONE_BLOCK);
+            ItemEntity item4 = drop(level, a4), item5 = drop(level, a5), item6 = drop(level, a6);
+            CHECKS.add(new Check("l'objet passe dans le Nether et ressort du mur, vers l'est", t + 80, () -> {
+                var ex = com.ourlet.fold.Transit.TEST_EXITS.get(item4.getId());
+                Ourlet.LOGGER.info("[SELFTEST] sortie dans le Nether : {}", ex);
+                return ex != null && Math.abs(ex.pos().x - b4.getX() - 1.155) < 0.05 && ex.velocity().x > 0.2;
+            }));
+            CHECKS.add(new Check("le pli alimenté par la redstone est fermé", t + 80, () ->
+                f5.powered() && !com.ourlet.fold.Transit.TEST_EXITS.containsKey(item5.getId()) && item5.isAlive()
+                    && item5.getY() >= Y + 0.9 && item5.getY() < Y + 1.3));
+            CHECKS.add(new Check("le pli à sens unique refuse l'entrée par A", t + 80, () ->
+                !com.ourlet.fold.Transit.TEST_EXITS.containsKey(item6.getId()) && item6.isAlive() && item6.getY() < Y + 1.3));
             CHECKS.add(new Check("l'objet ressort à 1 500 blocs, poussé vers l'est", t + 80, () -> {
                 var ex = com.ourlet.fold.Transit.TEST_EXITS.get(item.getId());
                 Ourlet.LOGGER.info("[SELFTEST] sortie de l'objet : {}", ex);
@@ -154,13 +197,22 @@ public final class ServerSelfTest {
             }));
             CHECKS.add(new Check("le piston a poussé la pierre taillée à travers le pli", t + 80, () ->
                 level.getBlockState(out3).is(Blocks.COBBLESTONE)));
-            CHECKS.add(new Check("les coutures sont visibles (6 affichages)", t + 70, () -> {
-                int n = Markers.count(level, f1) + Markers.count(level, f2) + Markers.count(level, f3);
+            CHECKS.add(new Check("les coutures sont visibles (12 affichages)", t + 70, () -> {
+                int n = 0;
+                for (Fold f : new Fold[]{f1, f2, f3, f4f, f5, f6}) if (f != null) n += Markers.count(f);
                 Ourlet.LOGGER.info("[SELFTEST] affichages : {}", n);
-                return n == 6;
+                return n == 12;
             }));
-            CHECKS.add(new Check("les plis sont sauvegardés", t + 80, () -> savedLines(server) >= 3));
+            CHECKS.add(new Check("les plis sont sauvegardés", t + 80, () -> savedLines(server) >= 6));
         });
+    }
+
+    private static ItemEntity drop(ServerLevel level, BlockPos onto) {
+        ItemEntity item = new ItemEntity(level, onto.getX() + 0.5, onto.getY() + 1.6, onto.getZ() + 0.5, new ItemStack(Items.EMERALD));
+        item.setDeltaMovement(0, -0.25, 0);
+        item.setPickUpDelay(100);
+        level.addFreshEntity(item);
+        return item;
     }
 
     private static Entity makeArrow(ServerLevel level, double x, double y, double z) {
@@ -225,6 +277,11 @@ public final class ServerSelfTest {
                 Ourlet.LOGGER.error("[SELFTEST] RELAY: FAIL (minerai intact)");
             }
         }
+        if (pocketWatch && now > pocketDeadline) {
+            pocketWatch = false;
+            boolean gone = !Folds.all().contains(shortPocket);
+            Ourlet.LOGGER.info("[SELFTEST] POCKET: {}", gone ? "OK" : "FAIL (le pli de poche ne s'est pas défait)");
+        }
     }
 
     /** L'atelier du joueur de test : un mur de laine cousu à une mine lointaine, et un sol cousu à un plafond. */
@@ -273,6 +330,9 @@ public final class ServerSelfTest {
         sp.getInventory().setItem(0, needle);
         sp.getInventory().setItem(1, new ItemStack(Items.DIAMOND_PICKAXE));
         sp.getInventory().setItem(2, new ItemStack(Items.TORCH, 16));
+        ItemStack thimble = new ItemStack(OurletItems.THIMBLE.get());
+        sp.getInventory().setItem(3, thimble);
+        sp.getInventory().setItem(4, new ItemStack(Items.SHEARS));
         //#if mc26
         //$$ sp.getInventory().setSelectedSlot(0);
         //#else
@@ -285,6 +345,21 @@ public final class ServerSelfTest {
         // un second pli, pour les captures : le sol de l'atelier vers le plafond de la mine
         NeedleItem.sew(sp, level, new BlockPos(sx + 2, Y - 1, z0 + 1), Direction.UP, needle, InteractionHand.MAIN_HAND);
         NeedleItem.sew(sp, level, new BlockPos(mx - 2, Y + 3, z0 + 8), Direction.DOWN, needle, InteractionHand.MAIN_HAND);
+
+        // le dé à coudre : la maison est le sol de la mine, le pli de poche s'ouvre dans l'atelier
+        sp.setShiftKeyDown(true);
+        ThimbleItem.pocket(sp, level, new BlockPos(mx + 2, Y - 1, z0 + 9), Direction.UP, thimble, InteractionHand.MAIN_HAND);
+        sp.setShiftKeyDown(false);
+        ThimbleItem.pocket(sp, level, new BlockPos(sx - 3, Y - 1, z0 + 3), Direction.UP, thimble, InteractionHand.MAIN_HAND);
+        long pockets = Folds.all().stream().filter(f -> f.temporary()).count();
+        ThimbleItem.pocket(sp, level, new BlockPos(sx - 2, Y - 1, z0 + 1), Direction.UP, thimble, InteractionHand.MAIN_HAND);
+        long pockets2 = Folds.all().stream().filter(f -> f.temporary()).count();
+        log(Folds.home(sp.getUUID()) != null && pockets == 1 && pockets2 == 1, "le dé à coudre ouvre un seul pli de poche à la fois");
+        // un pli de poche court, pour vérifier qu'il se défait seul
+        shortPocket = Folds.create(TESTER, Folds.anchor(level, new BlockPos(sx + 3, Y - 1, z0 - 2), Direction.UP, Direction.NORTH),
+            Folds.anchor(level, new BlockPos(mx + 3, Y - 1, z0 + 10), Direction.UP, Direction.NORTH), 40);
+        pocketWatch = true;
+        pocketDeadline = level.getGameTime() + 60;
 
         Compat.teleportPlayer(sp, level, sx + 0.5, Y, z0 + 1.5, 0f, 3f);
         relayWatch = true;

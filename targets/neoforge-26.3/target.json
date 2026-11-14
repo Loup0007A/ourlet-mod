@@ -63,6 +63,10 @@
     [
       "Blocks.LIGHT_BLUE_WOOL",
       "Blocks.WOOL.lightBlue()"
+    ],
+    [
+      "re:\\bGuiGraphics\\b",
+      "GuiGraphicsExtractor"
     ]
   ]
 }

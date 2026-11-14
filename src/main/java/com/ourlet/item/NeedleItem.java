@@ -48,13 +48,12 @@ public class NeedleItem extends Item {
     public static InteractionResult sew(ServerPlayer sp, ServerLevel sl, BlockPos pos, Direction face, ItemStack needle,
                                         net.minecraft.world.InteractionHand hand) {
         var uuid = sp.getUUID();
-        String dim = Compat.dim(sl);
         Folds.End existing = Folds.find(sl, pos, face);
         Folds.Pending pending = Folds.pending(uuid);
 
         if (sp.isShiftKeyDown()) {
             if (existing != null) {
-                Folds.remove(sl, existing.fold(), false);
+                Folds.remove(existing.fold(), false);
                 Compat.actionBar(sp, Component.translatable("ourlet.needle.cut"));
                 return InteractionResult.SUCCESS;
             }
@@ -75,22 +74,22 @@ public class NeedleItem extends Item {
             Compat.actionBar(sp, Component.translatable("ourlet.needle.not_solid"));
             return InteractionResult.FAIL;
         }
-        Anchor here = new Anchor(pos.immutable(), face, Anchor.upFor(face, sp.getDirection()), Folds.blockId(state));
+        Anchor here = Folds.anchor(sl, pos, face, sp.getDirection());
 
-        if (pending == null || !pending.dimension().equals(dim)) {
-            if (pending != null) Compat.actionBar(sp, Component.translatable("ourlet.needle.other_dimension"));
-            else Compat.actionBar(sp, Component.translatable("ourlet.needle.first"));
-            Folds.setPending(uuid, new Folds.Pending(dim, here, sl.getGameTime()));
+        if (pending == null || !Folds.intact(pending.anchor())) {
+            Compat.actionBar(sp, Component.translatable("ourlet.needle.first"));
+            Folds.setPending(uuid, new Folds.Pending(here, sl.getGameTime()));
             sl.playSound(null, pos, SoundEvents.WOOL_PLACE, SoundSource.PLAYERS, 0.8f, 1.5f);
             return InteractionResult.SUCCESS;
         }
         Anchor first = pending.anchor();
-        if (first.pos().equals(pos)) {
+        if (first.dim().equals(here.dim()) && first.pos().equals(pos)) {
             Compat.actionBar(sp, Component.translatable("ourlet.needle.same_block"));
             return InteractionResult.FAIL;
         }
-        if (Folds.find(sl, first.pos(), first.face()) != null) {
-            Folds.setPending(uuid, new Folds.Pending(dim, here, sl.getGameTime()));
+        ServerLevel firstLevel = Folds.level(first);
+        if (firstLevel == null || Folds.find(firstLevel, first.pos(), first.face()) != null) {
+            Folds.setPending(uuid, new Folds.Pending(here, sl.getGameTime()));
             Compat.actionBar(sp, Component.translatable("ourlet.needle.first"));
             return InteractionResult.SUCCESS;
         }
@@ -98,10 +97,11 @@ public class NeedleItem extends Item {
             Compat.actionBar(sp, Component.translatable("ourlet.needle.too_many", Folds.MAX_PER_PLAYER));
             return InteractionResult.FAIL;
         }
-        Fold f = Folds.create(sl, uuid, first, here);
+        Fold f = Folds.create(uuid, first, here);
         Folds.setPending(uuid, null);
         if (!sp.isCreative()) Compat.hurtNeedle(needle, sp, hand);
-        Compat.actionBar(sp, Component.translatable("ourlet.needle.sewn", f.span()));
+        Compat.actionBar(sp, f.crossDimension() ? Component.translatable("ourlet.needle.sewn_dimensions")
+            : Component.translatable("ourlet.needle.sewn", f.span()));
         return InteractionResult.SUCCESS;
     }
 
@@ -127,5 +127,6 @@ public class NeedleItem extends Item {
         out.accept(Component.translatable("item.ourlet.spatial_needle.tip1").withStyle(ChatFormatting.GRAY));
         out.accept(Component.translatable("item.ourlet.spatial_needle.tip2").withStyle(ChatFormatting.GRAY));
         out.accept(Component.translatable("item.ourlet.spatial_needle.tip3").withStyle(ChatFormatting.DARK_GRAY));
+        com.ourlet.carnet.CarnetHint.tooltip(out);
     }
 }

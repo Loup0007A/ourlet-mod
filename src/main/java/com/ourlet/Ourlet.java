@@ -35,8 +35,10 @@ public class Ourlet {
     //$$     net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(ServerEvents.class);
     //$$     net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.ourlet.debug.ServerSelfTest.class);
     //$$     if (FMLEnvironment.dist == Dist.CLIENT) {
-    //$$         modBus.addListener((net.neoforged.fml.event.lifecycle.FMLClientSetupEvent e) ->
-    //$$             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.ourlet.debug.ClientSelfTest.class));
+    //$$         modBus.addListener((net.neoforged.fml.event.lifecycle.FMLClientSetupEvent e) -> {
+    //$$             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.ourlet.debug.ClientSelfTest.class);
+    //$$             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.ourlet.client.ClientHooks.class);
+    //$$         });
     //$$     }
     //$$ }
     //#else
@@ -47,8 +49,10 @@ public class Ourlet {
         MinecraftForge.EVENT_BUS.register(ServerEvents.class);
         MinecraftForge.EVENT_BUS.register(com.ourlet.debug.ServerSelfTest.class);
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            modBus.addListener((net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent e) ->
-                MinecraftForge.EVENT_BUS.register(com.ourlet.debug.ClientSelfTest.class));
+            modBus.addListener((net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent e) -> {
+                MinecraftForge.EVENT_BUS.register(com.ourlet.debug.ClientSelfTest.class);
+                MinecraftForge.EVENT_BUS.register(com.ourlet.client.ClientHooks.class);
+            });
         }
     }
     //#endif

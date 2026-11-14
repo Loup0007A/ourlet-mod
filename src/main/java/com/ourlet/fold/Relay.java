@@ -68,7 +68,8 @@ public final class Relay {
         double left = Math.max(3.0, Compat.reach(player) - eye.distanceTo(hitOnFace));
         Vec3 start = Fold.mapPoint(here, there, hitOnFace).add(there.normal().scale(0.002));
         Vec3 d2 = Fold.mapVector(here, there, dir).normalize();
-        ServerLevel level = Compat.level(player);
+        ServerLevel level = Folds.level(there);
+        if (level == null) return null;
         BlockHitResult hit = level.clip(new ClipContext(start, start.add(d2.scale(left)), ClipContext.Block.OUTLINE,
             ClipContext.Fluid.NONE, player));
         return hit.getType() == HitResult.Type.MISS ? null : hit;
@@ -81,7 +82,7 @@ public final class Relay {
             Compat.actionBar(player, Component.translatable("ourlet.relay.nothing"));
             return;
         }
-        ServerLevel level = Compat.level(player);
+        ServerLevel level = Folds.level(end.there());
         busy = true;
         try {
             player.gameMode.useItemOn(player, level, player.getItemInHand(hand), hand, target);
@@ -98,8 +99,9 @@ public final class Relay {
      * Renvoie vrai si l'action a été prise en charge (le bloc A doit alors rester en place).
      */
     public static boolean dig(ServerPlayer player, Folds.End end, Vec3 hitOnFace) {
-        ServerLevel level = Compat.level(player);
-        BlockHitResult target = beyond(player, end, hitOnFace);
+        ServerLevel level = Folds.level(end.there());
+        ServerLevel home = Compat.level(player);
+        BlockHitResult target = level == null ? null : beyond(player, end, hitOnFace);
         if (target == null || level.getBlockState(target.getBlockPos()).isAir()) {
             Compat.actionBar(player, Component.translatable("ourlet.relay.nothing"));
             return true;
@@ -116,7 +118,7 @@ public final class Relay {
                 return true;
             }
             BlockPos ap = end.here().pos();
-            float pa = level.getBlockState(ap).getDestroyProgress(player, level, ap);
+            float pa = home.getBlockState(ap).getDestroyProgress(player, home, ap);
             // le temps passé à faire céder A, appliqué au bloc d'en face
             float ticksA = pa <= 0f ? 20f : Math.max(1f, (float) Math.ceil(1f / pa));
             gain = pr * ticksA;
@@ -135,23 +137,28 @@ public final class Relay {
         boolean done;
         busy = true;
         try {
-            done = player.gameMode.destroyBlock(rp);
+            done = level == home ? player.gameMode.destroyBlock(rp) : Compat.destroyElsewhere(player, level, rp);
         } finally {
             busy = false;
         }
-        if (done) pullDrops(level, rp, end.here());
+        if (done) pullDrops(level, home, rp, end.here());
         return true;
     }
 
     /** Ce qui vient de tomber de l'autre côté est ramené par le fil, devant la face A. */
-    private static void pullDrops(ServerLevel level, BlockPos from, Anchor home) {
+    private static void pullDrops(ServerLevel level, ServerLevel homeLevel, BlockPos from, Anchor home) {
         AABB box = new AABB(from).inflate(1.5);
         Vec3 n = home.normal();
         Vec3 at = home.center().add(n.scale(0.35));
         List<Entity> drops = level.getEntities((Entity) null, box,
             e -> (e instanceof ItemEntity || e instanceof ExperienceOrb) && e.tickCount <= 2);
         for (Entity e : drops) {
-            e.teleportTo(at.x, at.y - e.getBbHeight() / 2, at.z);
+            Vec3 to = new Vec3(at.x, at.y - e.getBbHeight() / 2, at.z);
+            if (level != homeLevel) {
+                Compat.moveAcross(e, homeLevel, to, n.scale(0.12), 0f, 0f);
+                continue;
+            }
+            e.teleportTo(to.x, to.y, to.z);
             e.setOldPosAndRot();
             e.setDeltaMovement(n.scale(0.12));
             Compat.syncMotion(e);

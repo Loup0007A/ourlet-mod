@@ -11,6 +11,10 @@
     [
       "ResourceLocation.fromNamespaceAndPath(",
       "new ResourceLocation("
+    ],
+    [
+      "ResourceLocation.parse(",
+      "new ResourceLocation("
     ]
   ]
 }
