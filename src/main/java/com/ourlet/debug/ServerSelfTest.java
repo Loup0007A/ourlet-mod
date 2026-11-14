@@ -48,7 +48,14 @@ public final class ServerSelfTest {
     private static final UUID TESTER = UUID.fromString("00000000-0000-4000-8000-0000000c0de5");
     private static final int Y = 200;
 
+    /**
+     * Une vérification, faite à {@code at}. Si elle échoue, on la refait toutes les 5 ticks pendant
+     * {@link #PATIENCE} ticks : sur un serveur de CI en retard, les entités d'un tronçon tout juste chargé
+     * peuvent attendre plusieurs secondes avant de bouger.
+     */
     private record Check(String what, long at, BooleanSupplier ok) {}
+
+    private static final long PATIENCE = 160;
 
     private static final List<Check> CHECKS = new ArrayList<>();
     private static final List<Runnable> LATER = new ArrayList<>();
@@ -338,11 +345,18 @@ public final class ServerSelfTest {
         if (!CHECKS.isEmpty()) {
             CHECKS.removeIf(c -> {
                 if (now < c.at) return false;
+                boolean last = now >= c.at + PATIENCE;
+                if (!last && (now - c.at) % 5 != 0) return false;
+                boolean ok;
+                String what = c.what;
                 try {
-                    log(c.ok.getAsBoolean(), c.what);
+                    ok = c.ok.getAsBoolean();
                 } catch (RuntimeException e) {
-                    log(false, c.what + " (" + e + ")");
+                    ok = false;
+                    what = c.what + " (" + e + ")";
                 }
+                if (!ok && !last) return false; // pas encore : on réessaie dans 5 ticks
+                log(ok, what);
                 return true;
             });
             if (CHECKS.isEmpty() && !startupDone) {
