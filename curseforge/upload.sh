@@ -33,6 +33,7 @@ MC_T=$(types_like "minecraft-")
 IFS=',' read -ra L <<< "$MC_VERSIONS"; for v in "${L[@]}"; do add "$MC_T" "$v"; done
 IFS=',' read -ra L <<< "$LOADERS"; for v in "${L[@]}"; do add "$(types_like modloader)" "$v"; done
 add "$(types_like environment)" "Client"
+add "$(types_like environment)" "Server"
 add "$(types_like java)" "$JAVA"
 [ "${#IDS[@]}" -gt 0 ] || { echo "Aucune version de jeu résolue"; exit 1; }
 GV=$(printf '%s\n' "${IDS[@]}" | jq -s '.')

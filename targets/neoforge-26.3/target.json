@@ -1,0 +1,68 @@
+{
+  "tags": [
+    "neoforge",
+    "mc26",
+    "mc263"
+  ],
+  "delete": [
+    "resources/META-INF/mods.toml"
+  ],
+  "rewrites": [
+    [
+      "net.minecraftforge.eventbus.api.SubscribeEvent",
+      "net.neoforged.bus.api.SubscribeEvent"
+    ],
+    [
+      "net.minecraftforge.eventbus.api.IEventBus",
+      "net.neoforged.bus.api.IEventBus"
+    ],
+    [
+      "net.minecraftforge.api.distmarker.",
+      "net.neoforged.api.distmarker."
+    ],
+    [
+      "net.minecraftforge.fml.",
+      "net.neoforged.fml."
+    ],
+    [
+      "import net.minecraftforge.event.TickEvent;",
+      "import net.neoforged.neoforge.client.event.ClientTickEvent;"
+    ],
+    [
+      "TickEvent.ClientTickEvent.",
+      "ClientTickEvent."
+    ],
+    [
+      "net.minecraftforge.registries.DeferredRegister",
+      "net.neoforged.neoforge.registries.DeferredRegister"
+    ],
+    [
+      "net.minecraftforge.",
+      "net.neoforged.neoforge."
+    ],
+    [
+      "re:\\bResourceLocation\\b",
+      "Identifier"
+    ],
+    [
+      "FMLEnvironment.dist",
+      "FMLEnvironment.getDist()"
+    ],
+    [
+      "re:\\bEntityType\\.([A-Z][A-Z_0-9]+)\\b",
+      "net.minecraft.world.entity.EntityTypes.\\1"
+    ],
+    [
+      "Blocks.WHITE_WOOL",
+      "Blocks.WOOL.white()"
+    ],
+    [
+      "Blocks.PINK_WOOL",
+      "Blocks.WOOL.pink()"
+    ],
+    [
+      "Blocks.LIGHT_BLUE_WOOL",
+      "Blocks.WOOL.lightBlue()"
+    ]
+  ]
+}

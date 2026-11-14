@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "forge",
+    "mc120",
+    "mc1201"
+  ],
+  "delete": [
+    "resources/data/ourlet/recipe"
+  ],
+  "rewrites": [
+    [
+      "ResourceLocation.fromNamespaceAndPath(",
+      "new ResourceLocation("
+    ]
+  ]
+}

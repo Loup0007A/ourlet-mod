@@ -1,6 +1,6 @@
 #!/bin/bash
 # Test en jeu d'un jar : vrai serveur (mise en scène) + vrai client (portablemc, Xvfb, rendu logiciel)
-# qui déroule un tirage et photographie chaque carte.
+# qui regarde une couture, casse à travers un pli puis le traverse.
 # Usage : tools/ci_test.sh <jar> <loader: forge|neoforge> <version du loader> <nom du test>
 #   ex.   tools/ci_test.sh out/ourlet-2.3.0-forge-1.21.1.jar forge 1.21.1-52.0.7 forge-1.21.1
 set -u
@@ -49,11 +49,13 @@ LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a -s "-screen 0 1280x720x24" timeout 1700 \
   -u Tester --join-server 127.0.0.1 --resolution 1280x720 \
   --jvm-arg=-Xmx3G,-Dourlet.clienttest=true > "$OUT/clienttest.log" 2>&1
 echo "client exit $?"
-grep -E "CLIENTTEST|FateFlip|Exception|ERROR|GL error|shader" "$OUT/clienttest.log" | head -150
+grep -E "CLIENTTEST|SELFTEST|Ourlet|Exception|ERROR" "$OUT/clienttest.log" | head -150
 grep -q "CLIENTTEST\] RESULT" "$OUT/clienttest.log" || tail -80 "$OUT/clienttest.log"
 cp client/screenshots/*.png "$OUT/screenshots/" 2>/dev/null || true
 cp client/crash-reports/*.txt "$OUT/" 2>/dev/null || true
 ls "$OUT/screenshots" | wc -l
 pkill -f "nogui" || true
 wait
-grep -q "\[SELFTEST\] READY" "$OUT/selftest.log" && grep -q "\[CLIENTTEST\] RESULT: OK" "$OUT/clienttest.log"
+grep -E "\[SELFTEST\]" "$OUT/selftest.log" | tail -20
+grep -q "\[SELFTEST\] RESULT: OK" "$OUT/selftest.log" && grep -q "\[SELFTEST\] RELAY: OK" "$OUT/selftest.log" \
+  && grep -q "\[CLIENTTEST\] RESULT: OK" "$OUT/clienttest.log"
