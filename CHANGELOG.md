@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+- Carnet de couture : les boutons (« chapitre précédent », « rejouer », « chapitre suivant ») passent à gauche, l'aide des touches à droite ; elles ne se chevauchent plus.
+
+Sewing Notebook: buttons moved to the left and the key hint to the right, so they no longer overlap.
+
 ## 1.1.0
 
 - **Carnet de couture** : un tutoriel en scènes animées, à la manière de « Ponder » (Create). Dans un inventaire, survole l'Aiguille Spatiale ou le Dé à coudre et **maintiens [W]**. 7 chapitres de maquettes brodées où les vrais objets traversent les plis, avec bulles, frise des étapes, pause et retour (← → ↑ ↓, espace).

@@ -197,10 +197,10 @@ public class CarnetScreen extends Screen {
         int by = py + ph - 18;
         // boutons : ◀ chapitre précédent, ⟲ rejouer, ▶ chapitre suivant ; ✕ en haut à droite
         if (my >= by - 2 && my <= by + 12) {
-            int cx = px + pw / 2;
-            if (mx >= cx - 46 && mx < cx - 26) { go(chapter - 1, 0); return true; }
-            if (mx >= cx - 10 && mx < cx + 10) { go(chapter, 0); return true; }
-            if (mx >= cx + 26 && mx < cx + 46) { go(chapter + 1, 0); return true; }
+            int bx = px + 24;
+            if (Math.abs(mx - bx) <= 10) { go(chapter - 1, 0); return true; }
+            if (Math.abs(mx - (bx + 24)) <= 10) { go(chapter, 0); return true; }
+            if (Math.abs(mx - (bx + 48)) <= 10) { go(chapter + 1, 0); return true; }
         }
         if (mx >= px + pw - 16 && mx < px + pw - 4 && my >= py + 4 && my < py + 16) {
             onClose();
@@ -327,12 +327,12 @@ public class CarnetScreen extends Screen {
         }
 
         // les boutons
-        int by = py + ph - 18, cx = px + pw / 2;
-        button(g, cx - 36, by, "◀", mx, my);
-        button(g, cx, by, paused ? "▶" : "⟲", mx, my);
-        button(g, cx + 36, by, "▶", mx, my);
+        int by = py + ph - 18, bx = px + 24;
+        button(g, bx, by, "«", mx, my);
+        button(g, bx + 24, by, "↺", mx, my);
+        button(g, bx + 48, by, "»", mx, my);
         String hint = Component.translatable("ourlet.carnet.keys").getString();
-        ClientCompat.text(g, font, hint, px + 10, by + 1, 0xFFA8987E, false);
+        ClientCompat.text(g, font, hint, px + pw - 12 - font.width(hint), by + 1, 0xFFA8987E, false);
     }
 
     private void button(GuiGraphics g, int cx, int y, String label, int mx, int my) {
