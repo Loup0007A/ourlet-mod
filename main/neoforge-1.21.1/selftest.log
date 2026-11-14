@@ -1,0 +1,130 @@
+[32m[19:17:05.435] [main/INFO] [Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserver, --fml.neoForgeVersion, 21.1.265, --fml.fmlVersion, 4.0.45, --fml.mcVersion, 1.21.1, --fml.neoFormVersion, 20240808.144430, nogui] 
+[m[32m[19:17:05.438] [main/INFO] [Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.13+9-LTS 
+[m[32m[19:17:05.439] [main/INFO] [Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.13 by Eclipse Adoptium; OS Linux arch amd64 version 7.0.0-1019-azure 
+[m[32m[19:17:05.569] [main/INFO] [loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserver 
+[m[32m[19:17:05.626] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/home/runner/work/ourlet-mod/ourlet-mod/ci-work/neoforge-1.21.1/srv/libraries/net/fabricmc/sponge-mixin/0.16.4+mixin.0.8.7/sponge-mixin-0.16.4+mixin.0.8.7.jar%2373!/ Service=ModLauncher Env=SERVER 
+[m[32m[19:17:06.080] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "server-1.21.1-20240808.144430-srg.jar" [locator: production server provider +net.neoforged:neoforge:21.1.265:server] 
+[m[32m[19:17:06.105] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "neoforge-21.1.265-universal.jar" [locator: PathBasedLocator[name=neoforge, paths=[libraries/net/neoforged/neoforge/21.1.265/neoforge-21.1.265-universal.jar]], reader: mod manifest] 
+[m[32m[19:17:06.114] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "ourlet-2.0.1-neoforge-1.21.1.jar" [locator: {mods folder locator at /home/runner/work/ourlet-mod/ourlet-mod/ci-work/neoforge-1.21.1/srv/mods}, reader: mod manifest] 
+[m[32m[19:17:06.240] [main/INFO] [loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection 
+[m[32m[19:17:06.240] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found gamelibrary file "mixinextras-neoforge-0.5.5.jar" [parent: neoforge-21.1.265-universal.jar, locator: jarinjar, reader: mod manifest] 
+[m[32m[19:17:06.241] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found library file "net.neoforged.neoforge-coremods-21.1.265.jar" [parent: neoforge-21.1.265-universal.jar, locator: jarinjar, reader: mod manifest] 
+[m[32m[19:17:06.242] [main/INFO] [loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.265 (neoforge)
+		Ourlet 2.0.1 (ourlet) 
+[m[32m[19:17:06.852] [main/INFO] [LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserver' with arguments [nogui] 
+[mWARN StatusConsoleListener Advanced terminal features are not available in this environment
+[19:17:08] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[19:17:13] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.265, for MC 1.21.1
+[19:17:14] [main/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[19:17:14] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/ourlet-mod/ourlet-mod/ci-work/neoforge-1.21.1/srv/libraries/net/minecraft/server/1.21.1-20240808.144430/server-1.21.1-20240808.144430-srg.jar%23118!/assets/.mcassetsroot' uses unexpected schema
+[19:17:14] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/ourlet-mod/ourlet-mod/ci-work/neoforge-1.21.1/srv/libraries/net/minecraft/server/1.21.1-20240808.144430/server-1.21.1-20240808.144430-srg.jar%23118!/data/.mcassetsroot' uses unexpected schema
+[19:17:15] [main/INFO] [minecraft/Main]: No existing world data, creating new world
+[19:17:16] [main/INFO] [minecraft/RecipeManager]: Loaded 1293 recipes
+[19:17:16] [main/INFO] [minecraft/AdvancementTree]: Loaded 1414 advancements
+[19:17:17] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.21.1
+[19:17:17] [Server thread/INFO] [minecraft/DedicatedServer]: Loading properties
+[19:17:17] [Server thread/INFO] [minecraft/DedicatedServer]: Default game type: CREATIVE
+[19:17:17] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[19:17:17] [Server thread/INFO] [minecraft/DedicatedServer]: Starting Minecraft server on *:25565
+[19:17:17] [Server thread/INFO] [minecraft/ServerConnectionListener]: Using epoll channel type
+[19:17:17] [Server thread/WARN] [minecraft/DedicatedServer]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[19:17:17] [Server thread/WARN] [minecraft/DedicatedServer]: The server will make no attempt to authenticate usernames. Beware.
+[19:17:17] [Server thread/WARN] [minecraft/DedicatedServer]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[19:17:17] [Server thread/WARN] [minecraft/DedicatedServer]: To change this, set "online-mode" to "true" in the server.properties file.
+[19:17:17] [Server thread/INFO] [minecraft/DedicatedServer]: Preparing level "world"
+[19:17:23] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for dimension minecraft:overworld
+[19:17:23] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[19:17:24] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[19:17:24] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[19:17:25] [Worker-Main-3/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[19:17:25] [Worker-Main-3/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 18%
+[19:17:26] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 18%
+[19:17:26] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 51%
+[19:17:27] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 51%
+[19:17:27] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 51%
+[19:17:28] [Server thread/INFO] [minecraft/LoggerChunkProgressListener]: Time elapsed: 4513 ms
+[19:17:28] [Server thread/INFO] [minecraft/DedicatedServer]: Done (10.795s)! For help, type "help"
+[19:17:28] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[19:17:29] [Server thread/INFO] [Ourlet/]: Pli #1 cousu : minecraft:overworld -12, 200, -32 up <-> minecraft:overworld 1488, 200, -32 east
+[19:17:29] [Server thread/INFO] [Ourlet/]: Pli #2 cousu : minecraft:overworld -2, 200, -32 west <-> minecraft:overworld 1498, 205, -32 up
+[19:17:30] [Server thread/INFO] [Ourlet/]: Pli #3 cousu : minecraft:overworld 10, 200, -32 west <-> minecraft:overworld 1508, 200, -32 north
+[19:17:32] [Server thread/INFO] [Ourlet/]: Pli #4 cousu : minecraft:overworld 18, 200, -32 up <-> minecraft:the_nether 8, 100, 8 east
+[19:17:32] [Server thread/INFO] [Ourlet/]: Pli #5 cousu : minecraft:overworld 28, 200, -32 up <-> minecraft:overworld 1528, 200, -32 east
+[19:17:32] [Server thread/INFO] [Ourlet/]: Pli #6 cousu : minecraft:overworld 38, 200, -32 up <-> minecraft:overworld 1538, 200, -32 east
+[19:17:33] [Server thread/INFO] [Ourlet/]: Pli #7 cousu : minecraft:overworld 48, 200, -32 up <-> minecraft:overworld 1548, 201, -32 east (3×3)
+[19:17:33] [Server thread/INFO] [Ourlet/]: Pli #8 cousu : minecraft:overworld 58, 200, -32 up <-> minecraft:overworld 1558, 200, -32 east
+[19:17:33] [Server thread/INFO] [Ourlet/]: Pli #9 cousu : minecraft:overworld 68, 200, -32 up <-> minecraft:overworld 68, 205, -32 down
+[19:17:33] [Server thread/INFO] [Ourlet/]: Pli #10 cousu : minecraft:overworld 78, 200, -32 up <-> minecraft:overworld 1578, 200, -32 east
+[19:17:33] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : dix plis cousus, dont un vers le Nether et un 3×3
+[19:17:33] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : la grande couture couvre 3×3 faces, pas plus
+[19:17:33] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : chaque carré a son jumeau
+[19:17:33] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : les tronçons des plis restent chargés (16)
+[19:17:33] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : config/ourlet.properties écrit avec les valeurs par défaut
+[19:17:33] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : les 15 progrès sont chargés (15)
+[19:17:33] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le pli 4 relie deux dimensions
+[19:17:33] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le pli 6 est à sens unique
+[19:17:33] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : une chute dans le sol ressort à l'horizontale du mur
+[19:17:34] [Server thread/INFO] [Ourlet/]: [SELFTEST] flèche lancée (true)
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] affichages : 36
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : les coutures sont visibles (36 affichages)
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] sortie 3×3 : Exit[pos=(1549.155, 200.375, -30.5), velocity=(0.28419999999999995, 0.0, 0.0)]
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : la grande couture fait ressortir l'objet par le coin jumeau
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] sortie élastique : Exit[pos=(1559.155, 200.375, -31.5), velocity=(0.7762999999999999, 0.0, 0.0)]
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le fil élastique lance plus fort
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] chute sans fin : 2 passages, y=201.56771405409734
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] lingots dans le coffre : 3 (transportés : 3)
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : l'entonnoir envoie ses lingots dans le coffre, de l'autre côté
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le fil teint en rouge
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] sortie dans le Nether : Exit[pos=(9.155, 100.375, 8.5), velocity=(0.28419999999999995, 0.0, 0.0)]
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : l'objet passe dans le Nether et ressort du mur, vers l'est
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le pli alimenté par la redstone est fermé
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le pli à sens unique refuse l'entrée par A
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] sortie de l'objet : Exit[pos=(1489.155, 200.375, -31.5), velocity=(0.28419999999999995, 0.0, 0.0)]
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : l'objet ressort à 1 500 blocs, poussé vers l'est
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] sortie de la flèche : Exit[pos=(1498.5, 206.03, -31.56616391666853), velocity=(0.0, 1.7465382504735951, 0.14850500142097472)] (maintenant en (1498.5, 201.61999800746477, -24.289205119956478))
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : la flèche ressort du sol, vers le haut
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le piston a poussé la pierre taillée à travers le pli
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : les plis sont sauvegardés
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] chute sans fin : 3 passages, y=204.05103076251052
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le fil ciré fait tomber sans fin, doucement
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : passages comptés : 8
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] RESULT: OK
+[19:17:37] [Server thread/INFO] [Ourlet/]: [SELFTEST] READY
+[19:18:30] [Server thread/INFO] [minecraft/PlayerList]: Tester[/127.0.0.1:52854] logged in with entity id 75 at (-28.5, 80.0, -32.5)
+[19:18:30] [Server thread/INFO] [minecraft/MinecraftServer]: Tester joined the game
+[19:18:31] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : un pli protégé : refusé à un autre joueur, permis à un opérateur
+[19:18:34] [Server thread/INFO] [minecraft/MinecraftServer]: Tester has made the advancement [First Hem]
+[19:18:34] [Server thread/INFO] [minecraft/MinecraftServer]: Tester has completed the challenge [The Long Seam]
+[19:18:34] [Server thread/INFO] [Ourlet/]: Pli #11 cousu : minecraft:overworld -32, 201, -20 north <-> minecraft:overworld 2968, 201, -20 south
+[19:18:34] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : l'aiguille coud le mur de l'atelier à la mine (SUCCESS, SUCCESS)
+[19:18:34] [Server thread/INFO] [minecraft/MinecraftServer]: Tester has made the advancement [Haute Couture]
+[19:18:34] [Server thread/INFO] [minecraft/MinecraftServer]: Tester has made the advancement [Hand-Stitched Label]
+[19:18:34] [Server thread/INFO] [minecraft/MinecraftServer]: Tester has made the advancement [Spring-Loaded]
+[19:18:34] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : teinture, étiquette et slime sur une couture
+[19:18:34] [Server thread/INFO] [Ourlet/]: Pli #12 cousu : minecraft:overworld -30, 199, -23 up <-> minecraft:overworld 2966, 203, -16 down
+[19:18:34] [Server thread/INFO] [minecraft/MinecraftServer]: Tester has made the advancement [Homeward Bound]
+[19:18:34] [Server thread/INFO] [Ourlet/]: Pli #13 cousu : minecraft:overworld -35, 199, -21 up <-> minecraft:overworld 2970, 199, -15 up (de poche)
+[19:18:34] [Server thread/INFO] [Ourlet/]: Pli #13 décousu
+[19:18:34] [Server thread/INFO] [Ourlet/]: Pli #14 cousu : minecraft:overworld -34, 199, -23 up <-> minecraft:overworld 2970, 199, -15 up (de poche)
+[19:18:34] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le dé à coudre ouvre un seul pli de poche à la fois
+[19:18:34] [Server thread/INFO] [Ourlet/]: Pli #15 cousu : minecraft:overworld -29, 199, -26 up <-> minecraft:overworld 2971, 199, -14 up (de poche)
+[19:18:36] [Server thread/INFO] [Ourlet/]: Pli #16 cousu : minecraft:overworld 2973, 199, -16 up <-> minecraft:overworld 2973, 203, -16 down (3×3)
+[19:18:36] [Server thread/INFO] [Ourlet/]: [SELFTEST] regard : ⇄ « Mine » Overworld 2968 201 -20 · 3000 blocks · open ▸ Diamond Ore
+[19:18:36] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : viser la couture montre où elle mène
+[19:18:36] [Server thread/INFO] [Ourlet/]: [SELFTEST] atelier prêt pour Tester (mur cousu -32, 201, -20, minerai 2968, 201, -18)
+[19:18:36] [Server thread/WARN] [minecraft/MinecraftServer]: Can't keep up! Is the server overloaded? Running 5491ms or 109 ticks behind
+[19:18:38] [Server thread/INFO] [Ourlet/]: Pli #15 décousu
+[19:18:39] [Server thread/INFO] [Ourlet/]: [SELFTEST] POCKET: OK
+[19:18:43] [Server thread/INFO] [minecraft/MinecraftServer]: Tester has made the advancement [Nimble Fingers]
+[19:18:43] [Server thread/INFO] [Ourlet/]: [SELFTEST] RELAY: OK
+[19:18:45] [Server thread/INFO] [minecraft/MinecraftServer]: Tester has made the advancement [Through the Stitches]
+[19:18:48] [Server thread/INFO] [minecraft/MinecraftServer]: [Tester: Teleported Tester to 2968.500000, 200.100000, -15.500000]
+[19:18:56] [Server thread/INFO] [Ourlet/]: Pli #14 décousu
+[19:19:01] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: Tester lost connection: Disconnected
+[19:19:01] [Server thread/INFO] [minecraft/MinecraftServer]: Tester left the game
+WARN StatusConsoleListener Unable to register Log4j shutdown hook because JVM is shutting down. Using SimpleLogger

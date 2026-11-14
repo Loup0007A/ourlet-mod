@@ -1,0 +1,7 @@
+build: success  test: success  15d6610d576294cf36fde4911ca4219260b51d4f
+forge-1.20.1: RESULT: OK
+forge-1.21.1: RESULT: OK
+forge-1.21: RESULT: OK
+neoforge-1.21.1: RESULT: OK
+neoforge-26.3-vulkan: RESULT: OK
+neoforge-26.3: RESULT: OK

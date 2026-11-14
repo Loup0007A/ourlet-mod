@@ -1,0 +1,193 @@
+2026-11-14T19:16:49.582767628Z main WARN Advanced terminal features are not available in this environment
+[19:16:49] [main/INFO] [ne.ne.fm.st.Entrypoint/]: JVM Uptime at startup: 67ms
+[19:16:49] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Starting FancyModLoader version 12.0.12 (DEDICATED_SERVER in PROD)
+[19:16:49] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Game directory: /home/runner/work/ourlet-mod/ourlet-mod/ci-work/neoforge-26.3-vulkan/srv
+[19:16:49] [main/INFO] [ne.ne.fm.lo.EarlyServiceDiscovery/]: Found 2 early service jars (out of 67) in 20ms
+[19:16:49] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Early Services:
+[19:16:49] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - libraries/net/neoforged/fancymodloader/earlydisplay/12.0.12/earlydisplay-12.0.12.jar
+[19:16:49] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - libraries/net/neoforged/fancymodloader/loader/12.0.12/loader-12.0.12.jar
+[19:16:49] [main/INFO] [ne.ne.fm.lo.ImmediateWindowHandler/]: Not loading early display in headless mode.
+[19:16:49] [main/INFO] [ne.ne.fm.lo.mo.lo.GameLocator/]: Failed to find common Minecraft classes and resources on the classpath. Assuming we're launching production.
+[19:16:49] [main/INFO] [ne.ne.fm.lo.mo.lo.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[19:16:49] [main/INFO] [ne.ne.fm.lo.mo.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Minecraft 26.3 (minecraft)
+		NeoForge 26.3.0.101 (neoforge)
+		Ourlet 2.0.1 (ourlet)
+[19:16:50] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/work/ourlet-mod/ourlet-mod/ci-work/neoforge-26.3-vulkan/srv/libraries/net/fabricmc/sponge-mixin/0.17.4+mixin.0.8.7/sponge-mixin-0.17.4+mixin.0.8.7.jar Service=FML Env=SERVER
+[19:16:50] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Plugins:
+[19:16:50] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - ~libraries/net/neoforged/neoforge/26.3.0.101/neoforge-26.3.0.101-universal.jar > net.neoforged.neoforge-coremods-26.3.0.101.jar
+[19:16:50] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Building game content classloader:
+ - minecraft (jar(~libraries/net/neoforged/minecraft-server-patched/26.3.0.101/minecraft-server-patched-26.3.0.101.jar))
+ - mixinextras.neoforge (jar(~libraries/net/neoforged/neoforge/26.3.0.101/neoforge-26.3.0.101-universal.jar > mixinextras-neoforge-0.5.5.jar))
+ - neoforge (jar(~libraries/net/neoforged/neoforge/26.3.0.101/neoforge-26.3.0.101-universal.jar))
+ - net.neoforged.fml.generated (empty(VirtualJar/net.neoforged.fml.generated))
+ - ourlet (jar(mods/ourlet-2.0.1-neoforge-26.3.jar))
+[19:16:50] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Built game content classloader in 26ms
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by com.sun.jna.Native in an unnamed module (file:/home/runner/work/ourlet-mod/ourlet-mod/ci-work/neoforge-26.3-vulkan/srv/libraries/net/java/dev/jna/jna/5.17.0/jna-5.17.0.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+[19:16:51] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by org.joml.MemUtil$MemUtilUnsafe (file:/home/runner/work/ourlet-mod/ourlet-mod/ci-work/neoforge-26.3-vulkan/srv/libraries/org/joml/joml/1.10.9/joml-1.10.9.jar)
+WARNING: Please consider reporting this to the maintainers of class org.joml.MemUtil$MemUtilUnsafe
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+[19:16:57] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 26.3.0.101, for MC 26.3
+[19:16:57] [modloading-worker-0/INFO] [ne.ne.ne.co.VersionChecker/]: No mods enabled for version check
+[19:16:57] [main/INFO] [mojang/MinecraftServicesDiscoveryService]: Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[19:16:59] [Worker-Main-1/INFO] [minecraft/Main]: No existing world data, creating new world
+[19:17:00] [Worker-Main-3/INFO] [minecraft/AdvancementTree]: Loaded 1881 advancements
+[19:17:00] [main/INFO] [ne.ne.ne.co.cr.RecipePriorityManager/]: Loaded 0 recipe priority overrides
+[19:17:00] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 26.3
+[19:17:00] [Server thread/INFO] [minecraft/DedicatedServer]: Loading properties
+[19:17:00] [Server thread/INFO] [minecraft/DedicatedServer]: Default game type: CREATIVE
+[19:17:00] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[19:17:00] [Server thread/INFO] [minecraft/DedicatedServer]: Starting Minecraft server on *:25565
+2026-11-14T19:17:00.594534375Z Server thread ERROR An exception occurred processing Appender DebugFile
+org.apache.logging.log4j.core.appender.AppenderLoggingException: java.lang.NoClassDefFoundError: Could not initialize class io.netty.channel.kqueue.Native
+	at org.apache.logging.log4j.core.config.AppenderControl.tryCallAppender(AppenderControl.java:164)
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender0(AppenderControl.java:133)
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppenderPreventRecursion(AppenderControl.java:124)
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender(AppenderControl.java:88)
+	at org.apache.logging.log4j.core.config.LoggerConfig.callAppenders(LoggerConfig.java:807)
+	at org.apache.logging.log4j.core.config.LoggerConfig.processLogEvent(LoggerConfig.java:765)
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:741)
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:650)
+	at org.apache.logging.log4j.core.config.AwaitCompletionReliabilityStrategy.log(AwaitCompletionReliabilityStrategy.java:67)
+	at org.apache.logging.log4j.core.Logger.logMessage(Logger.java:173)
+	at org.apache.logging.slf4j.Log4jLogger.log(Log4jLogger.java:374)
+	at io.netty.util.internal.logging.LocationAwareSlf4JLogger.log(LocationAwareSlf4JLogger.java:46)
+	at io.netty.util.internal.logging.LocationAwareSlf4JLogger.debug(LocationAwareSlf4JLogger.java:129)
+	at io.netty.channel.kqueue.KQueue.<clinit>(KQueue.java:54)
+	at TRANSFORMER/minecraft@26.3/net.minecraft.server.network.EventLoopGroupHolder.remote(EventLoopGroupHolder.java:59)
+	at TRANSFORMER/minecraft@26.3/net.minecraft.server.network.ServerConnectionListener.startTcpServerListener(ServerConnectionListener.java:63)
+	at TRANSFORMER/minecraft@26.3/net.minecraft.server.dedicated.DedicatedServer.initServer(DedicatedServer.java:217)
+	at TRANSFORMER/minecraft@26.3/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:725)
+	at TRANSFORMER/minecraft@26.3/net.minecraft.server.MinecraftServer.lambda$spin$0(MinecraftServer.java:306)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+Caused by: java.lang.NoClassDefFoundError: Could not initialize class io.netty.channel.kqueue.Native
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:547)
+	at org.apache.logging.log4j.util.LoaderUtil.loadClass(LoaderUtil.java:212)
+	at org.apache.logging.log4j.core.pattern.ThrowableExtendedStackTraceRenderer.lambda$static$1(ThrowableExtendedStackTraceRenderer.java:196)
+	at org.apache.logging.log4j.core.pattern.ThrowableExtendedStackTraceRenderer$ExtendedContext.loadClass(ThrowableExtendedStackTraceRenderer.java:180)
+	at org.apache.logging.log4j.core.pattern.ThrowableExtendedStackTraceRenderer$ExtendedContext.createClassResourceInfoByName(ThrowableExtendedStackTraceRenderer.java:166)
+	at org.apache.logging.log4j.core.pattern.ThrowableExtendedStackTraceRenderer$ExtendedContext.ofThrowable(ThrowableExtendedStackTraceRenderer.java:96)
+	at org.apache.logging.log4j.core.pattern.ThrowableExtendedStackTraceRenderer$ExtendedContext.access$000(ThrowableExtendedStackTraceRenderer.java:81)
+	at org.apache.logging.log4j.core.pattern.ThrowableExtendedStackTraceRenderer.createContext(ThrowableExtendedStackTraceRenderer.java:43)
+	at org.apache.logging.log4j.core.pattern.ThrowableExtendedStackTraceRenderer.createContext(ThrowableExtendedStackTraceRenderer.java:34)
+	at org.apache.logging.log4j.core.pattern.ThrowableStackTraceRenderer.renderThrowable(ThrowableStackTraceRenderer.java:55)
+	at org.apache.logging.log4j.core.pattern.ThrowablePatternConverter.format(ThrowablePatternConverter.java:130)
+	at org.apache.logging.log4j.core.layout.PatternLayout$NoFormatPatternSerializer.toSerializable(PatternLayout.java:354)
+	at org.apache.logging.log4j.core.layout.PatternLayout.toText(PatternLayout.java:251)
+	at org.apache.logging.log4j.core.layout.PatternLayout.encode(PatternLayout.java:237)
+	at org.apache.logging.log4j.core.layout.PatternLayout.encode(PatternLayout.java:57)
+	at org.apache.logging.log4j.core.appender.AbstractOutputStreamAppender.directEncodeEvent(AbstractOutputStreamAppender.java:227)
+	at org.apache.logging.log4j.core.appender.AbstractOutputStreamAppender.tryAppend(AbstractOutputStreamAppender.java:220)
+	at org.apache.logging.log4j.core.appender.AbstractOutputStreamAppender.append(AbstractOutputStreamAppender.java:211)
+	at org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender.append(RollingRandomAccessFileAppender.java:395)
+	at org.apache.logging.log4j.core.config.AppenderControl.tryCallAppender(AppenderControl.java:160)
+	... 19 more
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.IllegalStateException: Only supported on OSX/BSD [in thread "Server thread"]
+	at io.netty.channel.kqueue.Native.loadNativeLibrary(Native.java:159)
+	at io.netty.channel.kqueue.Native.<clinit>(Native.java:76)
+	at io.netty.channel.kqueue.KQueue.<clinit>(KQueue.java:38)
+	... 6 more
+
+[19:17:00] [Server thread/WARN] [minecraft/DedicatedServer]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[19:17:00] [Server thread/WARN] [minecraft/DedicatedServer]: The server will make no attempt to authenticate usernames. Beware.
+[19:17:00] [Server thread/WARN] [minecraft/DedicatedServer]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[19:17:00] [Server thread/WARN] [minecraft/DedicatedServer]: To change this, set "online-mode" to "true" in the server.properties file.
+[19:17:00] [Server thread/INFO] [minecraft/DedicatedServer]: Preparing level "world"
+[19:17:00] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Selecting global world spawn...
+[19:17:03] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 0 persistent chunks...
+[19:17:03] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 100%
+[19:17:03] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Time elapsed: 3065 ms
+[19:17:03] [Server thread/INFO] [minecraft/DedicatedServer]: Done (3.323s)! For help, type "help"
+[19:17:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[19:17:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[19:17:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[19:17:04] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[19:17:06] [Server thread/INFO] [Ourlet/]: Pli #1 cousu : minecraft:overworld -460, 200, 256 up <-> minecraft:overworld 1040, 200, 256 east
+[19:17:06] [Server thread/INFO] [Ourlet/]: Pli #2 cousu : minecraft:overworld -450, 200, 256 west <-> minecraft:overworld 1050, 205, 256 up
+[19:17:06] [Server thread/INFO] [Ourlet/]: Pli #3 cousu : minecraft:overworld -438, 200, 256 west <-> minecraft:overworld 1060, 200, 256 north
+[19:17:08] [Server thread/INFO] [Ourlet/]: Pli #4 cousu : minecraft:overworld -430, 200, 256 up <-> minecraft:the_nether 8, 100, 8 east
+[19:17:08] [Server thread/INFO] [Ourlet/]: Pli #5 cousu : minecraft:overworld -420, 200, 256 up <-> minecraft:overworld 1080, 200, 256 east
+[19:17:08] [Server thread/INFO] [Ourlet/]: Pli #6 cousu : minecraft:overworld -410, 200, 256 up <-> minecraft:overworld 1090, 200, 256 east
+[19:17:09] [Server thread/INFO] [Ourlet/]: Pli #7 cousu : minecraft:overworld -400, 200, 256 up <-> minecraft:overworld 1100, 201, 256 east (3×3)
+[19:17:09] [Server thread/INFO] [Ourlet/]: Pli #8 cousu : minecraft:overworld -390, 200, 256 up <-> minecraft:overworld 1110, 200, 256 east
+[19:17:10] [Server thread/INFO] [Ourlet/]: Pli #9 cousu : minecraft:overworld -380, 200, 256 up <-> minecraft:overworld -380, 205, 256 down
+[19:17:10] [Server thread/INFO] [Ourlet/]: Pli #10 cousu : minecraft:overworld -370, 200, 256 up <-> minecraft:overworld 1130, 200, 256 east
+[19:17:10] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : dix plis cousus, dont un vers le Nether et un 3×3
+[19:17:10] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : la grande couture couvre 3×3 faces, pas plus
+[19:17:10] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : chaque carré a son jumeau
+[19:17:10] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : les tronçons des plis restent chargés (16)
+[19:17:10] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : config/ourlet.properties écrit avec les valeurs par défaut
+[19:17:10] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : les 15 progrès sont chargés (15)
+[19:17:10] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le pli 4 relie deux dimensions
+[19:17:10] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le pli 6 est à sens unique
+[19:17:10] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : une chute dans le sol ressort à l'horizontale du mur
+[19:17:10] [Server thread/INFO] [Ourlet/]: [SELFTEST] flèche lancée (true)
+[19:17:13] [Server thread/INFO] [Ourlet/]: [SELFTEST] affichages : 36
+[19:17:13] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : les coutures sont visibles (36 affichages)
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] sortie 3×3 : Exit[pos=(1101.155, 200.375, 257.5), velocity=(0.28420000553131103, 0.0, 0.0)]
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : la grande couture fait ressortir l'objet par le coin jumeau
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] sortie élastique : Exit[pos=(1111.155, 200.375, 256.5), velocity=(0.7763000082969665, 0.0, 0.0)]
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le fil élastique lance plus fort
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] chute sans fin : 4 passages, y=202.41678933283416
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le fil ciré fait tomber sans fin, doucement
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] lingots dans le coffre : 3 (transportés : 3)
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : l'entonnoir envoie ses lingots dans le coffre, de l'autre côté
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le fil teint en rouge
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] sortie dans le Nether : Exit[pos=(9.155, 100.375, 8.5), velocity=(0.28420000553131103, 0.0, 0.0)]
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : l'objet passe dans le Nether et ressort du mur, vers l'est
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le pli alimenté par la redstone est fermé
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le pli à sens unique refuse l'entrée par A
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] sortie de l'objet : Exit[pos=(1041.155, 200.375, 256.5), velocity=(0.28420000553131103, 0.0, 0.0)]
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : l'objet ressort à 1 500 blocs, poussé vers l'est
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] sortie de la flèche : Exit[pos=(1050.5, 206.03, 256.43383608333147), velocity=(0.0, 1.7465382504735951, 0.14850500142097472)] (maintenant en (1050.5, 201.61999800746477, 263.7107948800438))
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : la flèche ressort du sol, vers le haut
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le piston a poussé la pierre taillée à travers le pli
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : les plis sont sauvegardés
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : passages comptés : 9
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] RESULT: OK
+[19:17:14] [Server thread/INFO] [Ourlet/]: [SELFTEST] READY
+[19:17:50] [Server thread/INFO] [minecraft/PlayerList]: Tester[/127.0.0.1:55046] logged in with entity id 56 at (-476.5, 65.0, 246.5)
+[19:17:50] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Tester joined the game
+[19:17:50] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : un pli protégé : refusé à un autre joueur, permis à un opérateur
+[19:17:52] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Tester has made the advancement [First Hem]
+[19:17:52] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Tester has completed the challenge [The Long Seam]
+[19:17:52] [Server thread/INFO] [Ourlet/]: Pli #11 cousu : minecraft:overworld -480, 201, 268 north <-> minecraft:overworld 2520, 201, 268 south
+[19:17:52] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : l'aiguille coud le mur de l'atelier à la mine (Success[swingSource=PREDICTED, itemContext=ItemContext[wasItemInteraction=true, heldItemTransformedTo=null]], Success[swingSource=PREDICTED, itemContext=ItemContext[wasItemInteraction=true, heldItemTransformedTo=null]])
+[19:17:52] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Tester has made the advancement [Haute Couture]
+[19:17:52] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Tester has made the advancement [Hand-Stitched Label]
+[19:17:52] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Tester has made the advancement [Spring-Loaded]
+[19:17:52] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : teinture, étiquette et slime sur une couture
+[19:17:52] [Server thread/INFO] [Ourlet/]: Pli #12 cousu : minecraft:overworld -478, 199, 265 up <-> minecraft:overworld 2518, 203, 272 down
+[19:17:52] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Tester has made the advancement [Homeward Bound]
+[19:17:52] [Server thread/INFO] [Ourlet/]: Pli #13 cousu : minecraft:overworld -483, 199, 267 up <-> minecraft:overworld 2522, 199, 273 up (de poche)
+[19:17:52] [Server thread/INFO] [Ourlet/]: Pli #13 décousu
+[19:17:52] [Server thread/INFO] [Ourlet/]: Pli #14 cousu : minecraft:overworld -482, 199, 265 up <-> minecraft:overworld 2522, 199, 273 up (de poche)
+[19:17:52] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : le dé à coudre ouvre un seul pli de poche à la fois
+[19:17:52] [Server thread/INFO] [Ourlet/]: Pli #15 cousu : minecraft:overworld -477, 199, 262 up <-> minecraft:overworld 2523, 199, 274 up (de poche)
+[19:17:54] [Server thread/INFO] [Ourlet/]: Pli #16 cousu : minecraft:overworld 2525, 199, 272 up <-> minecraft:overworld 2525, 203, 272 down (3×3)
+[19:17:54] [Server thread/INFO] [Ourlet/]: [SELFTEST] regard : ⇄ « Mine » Overworld 2520 201 268 · 3000 blocks · open ▸ Diamond Ore
+[19:17:54] [Server thread/INFO] [Ourlet/]: [SELFTEST] ok : viser la couture montre où elle mène
+[19:17:54] [Server thread/INFO] [Ourlet/]: [SELFTEST] atelier prêt pour Tester (mur cousu -480, 201, 268, minerai 2520, 201, 270)
+[19:17:54] [Server thread/WARN] [minecraft/MinecraftServer]: Can't keep up! Is the server overloaded? Running 3914ms or 78 ticks behind
+[19:17:56] [Server thread/INFO] [Ourlet/]: Pli #15 décousu
+[19:17:57] [Server thread/INFO] [Ourlet/]: [SELFTEST] POCKET: OK
+[19:18:03] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Tester has made the advancement [Nimble Fingers]
+[19:18:03] [Server thread/INFO] [Ourlet/]: [SELFTEST] RELAY: OK
+[19:18:05] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Tester has made the advancement [Through the Stitches]
+[19:18:05] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: Player Tester standing on air - force-sending blocks below
+[19:18:05] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: [Tester: Teleported Tester to 2520.500000, 200.100000, 272.500000]
+[19:18:14] [Server thread/INFO] [Ourlet/]: Pli #14 décousu
+[19:18:25] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: Tester lost connection: Disconnected
+[19:18:25] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Tester left the game
+2026-11-14T19:18:27.036965066Z Server thread WARN Unable to register Log4j shutdown hook because JVM is shutting down. Using SimpleLogger
+server exit 143
