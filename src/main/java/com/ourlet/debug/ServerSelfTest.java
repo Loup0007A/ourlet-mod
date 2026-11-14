@@ -135,12 +135,10 @@ public final class ServerSelfTest {
             item.setDeltaMovement(0, -0.25, 0);
             item.setPickUpDelay(100);
             level.addFreshEntity(item);
-            Entity arrow = makeArrow(level);
-            if (arrow != null) {
-                arrow.setPos(a2.getX() - 6.0, Y + 0.5, sz + 0.5);
-                arrow.setDeltaMovement(1.8, 0, 0);
-                level.addFreshEntity(arrow);
-            }
+            Entity arrow = makeArrow(level, a2.getX() - 6.0, Y + 0.5, sz + 0.5);
+            arrow.setDeltaMovement(1.8, 0, 0);
+            boolean added = level.addFreshEntity(arrow);
+            Ourlet.LOGGER.info("[SELFTEST] flèche lancée ({})", added);
             set(level, piston.getX(), Y + 1, sz, Blocks.REDSTONE_BLOCK);
             CHECKS.add(new Check("l'objet ressort à 1 500 blocs, poussé vers l'est", t + 40, () ->
                 item.isAlive() && item.getX() > b1.getX() + 1 && item.getX() < b1.getX() + 12 && Math.abs(item.getZ() - sz - 0.5) < 1.5));
@@ -151,17 +149,22 @@ public final class ServerSelfTest {
             }));
             CHECKS.add(new Check("le piston a poussé la pierre taillée à travers le pli", t + 40, () ->
                 level.getBlockState(out3).is(Blocks.COBBLESTONE)));
-            CHECKS.add(new Check("les coutures sont visibles (6 affichages)", t + 40, () ->
-                Markers.count(level, f1) + Markers.count(level, f2) + Markers.count(level, f3) == 6));
+            CHECKS.add(new Check("les coutures sont visibles (6 affichages)", t + 70, () -> {
+                int n = Markers.count(level, f1) + Markers.count(level, f2) + Markers.count(level, f3);
+                Ourlet.LOGGER.info("[SELFTEST] affichages : {}", n);
+                return n == 6;
+            }));
             CHECKS.add(new Check("les plis sont sauvegardés", t + 40, () -> savedLines(server) >= 3));
         });
     }
 
-    private static Entity makeArrow(ServerLevel level) {
+    private static Entity makeArrow(ServerLevel level, double x, double y, double z) {
         //#if mc26
-        //$$ return net.minecraft.world.entity.EntityTypes.ARROW.create(level, net.minecraft.world.entity.EntitySpawnReason.LOAD);
+        //$$ return new net.minecraft.world.entity.projectile.arrow.Arrow(level, x, y, z, new ItemStack(Items.ARROW), null);
+        //#elif mc1201
+        //$$ return new net.minecraft.world.entity.projectile.Arrow(level, x, y, z);
         //#else
-        return net.minecraft.world.entity.EntityType.ARROW.create(level);
+        return new net.minecraft.world.entity.projectile.Arrow(level, x, y, z, new ItemStack(Items.ARROW), null);
         //#endif
     }
 

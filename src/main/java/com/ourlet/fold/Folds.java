@@ -223,7 +223,7 @@ public final class Folds {
                 }
                 here = in(level);
             }
-            if (time % 100 == 0) for (Fold f : here) Markers.heal(level, f);
+            if (time % 20 == 10) for (Fold f : here) Markers.heal(level, f);
             if (time % 30 == 0) for (Fold f : here) Effects.idle(level, f);
             Transit.tick(level, here, time);
         }
