@@ -157,6 +157,19 @@ public final class ServerSelfTest {
         final Fold f4f = f4;
 
         log(Folds.all().size() == 6 && f4 != null, "six plis cousus, dont un vers le Nether");
+        log(java.nio.file.Files.exists(com.ourlet.OurletConfig.file()) && com.ourlet.OurletConfig.maxFolds == 12,
+            "config/ourlet.properties écrit avec les valeurs par défaut");
+        int advs = 0;
+        for (String a : new String[]{"root", "sew", "pass", "fling", "far", "dimensions", "relay", "snip", "pocket"}) {
+            //#if mc26
+            //$$ if (server.getAdvancements().get(net.minecraft.resources.Identifier.fromNamespaceAndPath("ourlet", a)) != null) advs++;
+            //#elif mc1201
+            //$$ if (server.getAdvancements().getAdvancement(new net.minecraft.resources.ResourceLocation("ourlet", a)) != null) advs++;
+            //#else
+            if (server.getAdvancements().get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ourlet", a)) != null) advs++;
+            //#endif
+        }
+        log(advs == 9, "les 9 progrès sont chargés (" + advs + ")");
         log(f4 != null && f4.crossDimension(), "le pli 4 relie deux dimensions");
         log(!f6.canEnter(f6.a) && f6.canEnter(f6.b), "le pli 6 est à sens unique");
         log(Fold.mapVector(f1.a, f1.b, new Vec3(0, -1, 0)).distanceTo(new Vec3(1, 0, 0)) < 1e-6,
@@ -290,12 +303,15 @@ public final class ServerSelfTest {
         if (!ENABLED || !(event.getEntity() instanceof ServerPlayer sp)) return;
         ServerLevel level = Compat.level(sp);
         MinecraftServer server = level.getServer();
+        Fold anyFold = Folds.all().isEmpty() ? null : Folds.all().get(0);
+        boolean deniedBefore = anyFold != null && !Folds.mayEdit(sp, anyFold);
         //#if mc26
         //$$ server.getPlayerList().op(new net.minecraft.server.players.NameAndId(sp.getGameProfile()));
         //#else
         server.getPlayerList().op(sp.getGameProfile());
         //#endif
         sp.setGameMode(GameType.CREATIVE);
+        log(deniedBefore && Folds.mayEdit(sp, anyFold), "un pli protégé : refusé à un autre joueur, permis à un opérateur");
         int z0 = sz + 8;
         // sol de bouleau et murs de laine blanche
         for (int x = sx - 3; x <= sx + 3; x++) {
@@ -362,6 +378,9 @@ public final class ServerSelfTest {
         pocketDeadline = level.getGameTime() + 60;
 
         Compat.teleportPlayer(sp, level, sx + 0.5, Y, z0 + 1.5, 0f, 3f);
+        var gaze = com.ourlet.fold.Gaze.describe(sp);
+        Ourlet.LOGGER.info("[SELFTEST] regard : {}", gaze == null ? null : gaze.getString());
+        log(gaze != null && gaze.getString().contains(String.valueOf(mx)), "viser la couture montre où elle mène");
         relayWatch = true;
         relayDeadline = level.getGameTime() + 20 * 120;
         Ourlet.LOGGER.info("[SELFTEST] atelier prêt pour {} (mur cousu {}, minerai {})", sp.getName().getString(),

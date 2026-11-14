@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "ourlet:thimble"
+    },
+    "title": {
+      "translate": "advancements.ourlet.pocket.title"
+    },
+    "description": {
+      "translate": "advancements.ourlet.pocket.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "ourlet:sew",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

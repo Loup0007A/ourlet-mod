@@ -23,6 +23,9 @@ Il n'y a ni portail ni nouveau bloc : seulement une couture brodée sur deux blo
 9. **Ciseaux et redstone** — clic droit sur une couture avec des ciseaux : ouvert → **sens unique** → **fermé**.
    Un signal de redstone à côté d'un bloc cousu ferme le pli, comme une porte. La couture se resserre quand le pli se ferme.
 
+10. **Le regard** — vise une couture : la barre d'action dit où elle mène, son état et le bloc que tu toucherais de l'autre côté.
+11. **En multijoueur** — seuls le propriétaire d'un pli et les opérateurs peuvent le découdre ou le couper ; tout le monde peut le traverser.
+
 ### Le Carnet de couture
 
 Dans un inventaire, survole l'Aiguille Spatiale ou le Dé à coudre et **maintiens [W]** : le carnet s'ouvre,
@@ -37,7 +40,24 @@ avec des notes dans la marge, une frise des étapes, pause et navigation (← �
 | Chargement | les deux bouts d'un pli restent chargés : ce qui passe arrive tout de suite |
 | Commande | `/ourlet list` |
 
-Les deux bouts d'un pli portent la même couleur de fil (rose, indigo, safran, sauge).
+Les deux bouts d'un pli portent la même couleur de fil (rose, indigo, safran, sauge). Neuf progrès, dans un onglet brodé,
+accompagnent la découverte du mod.
+
+### Configuration du serveur
+
+`config/ourlet.properties` est créé au premier démarrage :
+
+| Clé | Défaut | Rôle |
+|---|---|---|
+| `max_folds_per_player` | 12 | plis permanents par joueur |
+| `pocket_seconds` | 20 | durée d'un pli de poche |
+| `cross_dimension` | true | plis entre deux dimensions |
+| `force_load_chunks` | true | garder chargés les deux bouts d'un pli |
+| `protect_folds` | true | seuls propriétaire et opérateurs décousent / coupent |
+| `relay` | true | miner, poser, utiliser à travers une couture |
+| `pistons` | true | les pistons poussent à travers les plis |
+| `gaze` | true | viser une couture affiche sa destination |
+| `blacklist` | ender_dragon, wither | entités qui ne passent jamais |
 
 ## Versions
 

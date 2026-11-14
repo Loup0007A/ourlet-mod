@@ -45,6 +45,7 @@ public final class ServerEvents {
 
     @SubscribeEvent
     public static void onAboutToStart(ServerAboutToStartEvent event) {
+        com.ourlet.OurletConfig.load();
         Folds.load(event.getServer());
     }
 
@@ -78,6 +79,7 @@ public final class ServerEvents {
             Transit.trackPlayers(level);
             Folds.tick(level);
         }
+        com.ourlet.fold.Gaze.tick(server);
         com.ourlet.debug.ServerSelfTest.tick(server);
     }
 
@@ -96,7 +98,7 @@ public final class ServerEvents {
             snip(player, end);
             return;
         }
-        if (!end.open()) return; // pli fermé ou à sens unique dans l'autre sens : le bloc redevient un bloc
+        if (!end.open() || !com.ourlet.OurletConfig.relay) return; // pli fermé ou à sens unique dans l'autre sens : le bloc redevient un bloc
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.SUCCESS);
         Relay.use(player, event.getHand(), end, hit.getLocation());
@@ -105,6 +107,10 @@ public final class ServerEvents {
     /** Ciseaux : ouvert → sens unique (on entre par cette face) → fermé → ouvert. */
     private static void snip(ServerPlayer player, Folds.End end) {
         Fold f = end.fold();
+        if (!Folds.mayEdit(player, f)) {
+            Compat.actionBar(player, Component.translatable("ourlet.protected", Folds.ownerName(f)));
+            return;
+        }
         boolean isA = end.here() == f.a;
         int next = switch (f.mode()) {
             case Fold.OPEN -> isA ? Fold.ONLY_A : Fold.ONLY_B;
@@ -118,6 +124,7 @@ public final class ServerEvents {
             default -> "ourlet.shears.one_way";
         };
         Compat.actionBar(player, Component.translatable(key));
+        com.ourlet.fold.Progress.grant(player, "snip");
         com.ourlet.fold.Effects.snip(Compat.level(player), end.here(), f.color);
     }
 
@@ -130,7 +137,7 @@ public final class ServerEvents {
     public static void onBreak(BlockEvent.BreakEvent event) {
     //#endif
         if (!(event.getPlayer() instanceof ServerPlayer player) || Relay.busy()) return;
-        if (Folds.all().isEmpty()) return;
+        if (Folds.all().isEmpty() || !com.ourlet.OurletConfig.relay) return;
         BlockHitResult hit = Relay.pick(player);
         if (hit == null || !hit.getBlockPos().equals(event.getPos())) return;
         Folds.End end = Folds.find(Compat.level(player), event.getPos(), hit.getDirection());
@@ -145,7 +152,7 @@ public final class ServerEvents {
     @SubscribeEvent
     public static void onPiston(PistonEvent.Pre event) {
         if (event.getPistonMoveType() != PistonEvent.PistonMoveType.EXTEND) return;
-        if (!(event.getLevel() instanceof ServerLevel level) || Folds.all().isEmpty()) return;
+        if (!(event.getLevel() instanceof ServerLevel level) || Folds.all().isEmpty() || !com.ourlet.OurletConfig.pistons) return;
         Direction dir = event.getDirection();
         BlockPos p = event.getPos().relative(dir);
         BlockPos last = null;
@@ -208,7 +215,7 @@ public final class ServerEvents {
                 ctx.getSource().sendSuccess(() -> line, false);
             }
             final int count = n;
-            ctx.getSource().sendSuccess(() -> Component.translatable("ourlet.command.count", count, Folds.MAX_PER_PLAYER), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("ourlet.command.count", count, com.ourlet.OurletConfig.maxFolds), false);
             return Command.SINGLE_SUCCESS;
         })));
     }

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.0
+
+- **Regard à travers la couture** : vise une couture, la barre d'action dit où mène le pli (dimension, position, distance), son état (ouvert, sens unique, fermé, fermé par la redstone, temps restant d'un pli de poche) et le bloc que tu toucherais de l'autre côté.
+- **Plis protégés** : sur un serveur, seuls le propriétaire d'un pli et les opérateurs peuvent le découdre ou le couper aux ciseaux. Tout le monde peut toujours le traverser.
+- **Fichier de configuration** `config/ourlet.properties` (créé au premier démarrage) : plis par joueur, durée des plis de poche, plis entre dimensions, chargement des deux bouts, protection, relais, pistons, regard, liste noire d'entités (Ender Dragon et Wither par défaut).
+- **Progrès** : un onglet « Ourlet » brodé, 9 progrès (Premier ourlet, Entre les mailles, Tomber à pic, Grand écart, D'un monde à l'autre, Doigts de fée, Coupe franche, Retour au bercail).
+- **Carnet de couture** : deux nouvelles pages (le regard à travers la couture, la protection des plis).
+
+Gaze through seams (action bar shows destination, state and the block on the other side), protected folds on servers (owner/ops only), a server config file, 9 advancements in an embroidered tab, and two new notebook pages.
+
 ## 1.1.1
 
 - Carnet de couture : les boutons (« chapitre précédent », « rejouer », « chapitre suivant ») passent à gauche, l'aide des touches à droite ; elles ne se chevauchent plus.

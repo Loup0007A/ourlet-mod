@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "ourlet:spatial_needle"
+    },
+    "title": {
+      "translate": "advancements.ourlet.root.title"
+    },
+    "description": {
+      "translate": "advancements.ourlet.root.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "ourlet:textures/gui/advancements/linen.png"
+  },
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}

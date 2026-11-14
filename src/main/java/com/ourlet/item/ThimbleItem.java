@@ -90,13 +90,17 @@ public class ThimbleItem extends Item {
             return InteractionResult.FAIL;
         }
         Anchor here = Folds.anchor(sl, pos, face, sp.getDirection());
+        if (!com.ourlet.OurletConfig.crossDimension && !here.dim().equals(home.dim())) {
+            Compat.actionBar(sp, Component.translatable("ourlet.needle.no_dimensions"));
+            return InteractionResult.FAIL;
+        }
         if (here.dim().equals(home.dim()) && here.pos().equals(home.pos())) {
             Compat.actionBar(sp, Component.translatable("ourlet.needle.same_block"));
             return InteractionResult.FAIL;
         }
-        Folds.create(uuid, here, home, Folds.POCKET_TICKS);
+        Folds.create(uuid, here, home, Folds.pocketTicks());
         if (!sp.isCreative()) Compat.hurtNeedle(thimble, sp, hand);
-        Compat.actionBar(sp, Component.translatable("ourlet.thimble.opened", Folds.POCKET_TICKS / 20));
+        Compat.actionBar(sp, Component.translatable("ourlet.thimble.opened", com.ourlet.OurletConfig.pocketSeconds));
         return InteractionResult.SUCCESS;
     }
 

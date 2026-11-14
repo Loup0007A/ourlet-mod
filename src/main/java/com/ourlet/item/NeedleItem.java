@@ -53,6 +53,10 @@ public class NeedleItem extends Item {
 
         if (sp.isShiftKeyDown()) {
             if (existing != null) {
+                if (!Folds.mayEdit(sp, existing.fold())) {
+                    Compat.actionBar(sp, Component.translatable("ourlet.protected", Folds.ownerName(existing.fold())));
+                    return InteractionResult.FAIL;
+                }
                 Folds.remove(existing.fold(), false);
                 Compat.actionBar(sp, Component.translatable("ourlet.needle.cut"));
                 return InteractionResult.SUCCESS;
@@ -93,8 +97,13 @@ public class NeedleItem extends Item {
             Compat.actionBar(sp, Component.translatable("ourlet.needle.first"));
             return InteractionResult.SUCCESS;
         }
-        if (!sp.isCreative() && Folds.owned(uuid) >= Folds.MAX_PER_PLAYER) {
-            Compat.actionBar(sp, Component.translatable("ourlet.needle.too_many", Folds.MAX_PER_PLAYER));
+        if (!com.ourlet.OurletConfig.crossDimension && !first.dim().equals(here.dim())) {
+            Folds.setPending(uuid, new Folds.Pending(here, sl.getGameTime()));
+            Compat.actionBar(sp, Component.translatable("ourlet.needle.no_dimensions"));
+            return InteractionResult.SUCCESS;
+        }
+        if (!sp.isCreative() && Folds.owned(uuid) >= com.ourlet.OurletConfig.maxFolds) {
+            Compat.actionBar(sp, Component.translatable("ourlet.needle.too_many", com.ourlet.OurletConfig.maxFolds));
             return InteractionResult.FAIL;
         }
         Fold f = Folds.create(uuid, first, here);

@@ -76,6 +76,11 @@
       74.0,
       62.0
      ]
+    },
+    {
+     "frame": "sew_2",
+     "text": "ourlet.carnet.sew.6",
+     "ticks": 80
     }
    ]
   },
@@ -250,6 +255,15 @@
    "id": "relay",
    "icon": "minecraft:diamond_pickaxe",
    "steps": [
+    {
+     "frame": "relay_0",
+     "text": "ourlet.carnet.relay.0",
+     "ticks": 80,
+     "point": [
+      74.0,
+      62.0
+     ]
+    },
     {
      "frame": "relay_0",
      "text": "ourlet.carnet.relay.1",

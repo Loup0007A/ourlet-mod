@@ -31,6 +31,11 @@ The **Spatial Needle** sews the space between two block faces. There's no portal
 8. **The Thimble.** Sneak + right-click a face to make it *home*. Later, anywhere you are (even in another dimension), right-click any face to baste a **pocket fold** back home. It lasts 20 seconds.
 9. **Shears & redstone.** Snip a seam with shears to cycle it: open → **one-way** → **closed**. A redstone signal next to a sewn block also closes the fold, like a door, and the seams visibly pull tight.
 
+10. **Gaze through.** Aim at a seam: the action bar tells you where it leads, whether it's open, one-way or closed, and which block you'd touch on the other side.
+11. **Multiplayer-friendly.** Only a fold's owner (or an operator) can unpick or snip it; everyone can go through. Everything is configurable in `config/ourlet.properties` (limits, cross-dimension, chunk loading, relay, pistons, entity blacklist).
+
+9 advancements in an embroidered "Ourlet" tab guide you through the mod.
+
 ### The Sewing Notebook (Ponder-style tutorial)
 
 In any inventory, hover the Spatial Needle or the Thimble and **hold [W]**. The notebook opens: 7 chapters of embroidered isometric dioramas where real item icons travel through folds, with margin notes pointing at each part, a step timeline, pause and navigation.

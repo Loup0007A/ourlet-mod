@@ -31,10 +31,21 @@ public final class Folds {
 
     private Folds() {}
 
-    /** Plis permanents par joueur. */
-    public static final int MAX_PER_PLAYER = 12;
-    /** Durée d'un pli de poche (dé à coudre), en ticks. */
-    public static final int POCKET_TICKS = 20 * 20;
+    /** Durée d'un pli de poche (dé à coudre), en ticks (réglage pocket_seconds). */
+    public static int pocketTicks() {
+        return com.ourlet.OurletConfig.pocketSeconds * 20;
+    }
+
+    /** Ce joueur peut-il découdre ou couper ce pli ? (propriétaire, opérateur, ou protection désactivée) */
+    public static boolean mayEdit(net.minecraft.server.level.ServerPlayer p, Fold f) {
+        return !com.ourlet.OurletConfig.protect || f.owner.equals(p.getUUID()) || Compat.isOp(p);
+    }
+
+    /** Le nom du propriétaire s'il est connecté, sinon « un autre joueur ». */
+    public static net.minecraft.network.chat.Component ownerName(Fold f) {
+        var online = server == null ? null : server.getPlayerList().getPlayer(f.owner);
+        return online != null ? online.getName() : net.minecraft.network.chat.Component.translatable("ourlet.someone");
+    }
 
     /** Un bout de pli vu depuis une face : {@code here} est la face touchée, {@code there} l'autre. */
     public record End(Fold fold, Anchor here) {
@@ -118,6 +129,8 @@ public final class Folds {
         file = null;
         Transit.reset();
         Relay.reset();
+        Gaze.reset();
+        Progress.reset();
     }
 
     // ───────────────────────── recherche ─────────────────────────
@@ -224,6 +237,15 @@ public final class Folds {
         Markers.place(f);
         Effects.stitch(level(a), f.a, f.color);
         Effects.stitch(level(b), f.b, f.color);
+        var player = server.getPlayerList().getPlayer(owner);
+        if (player != null) {
+            if (f.temporary()) Progress.grant(player, "pocket");
+            else {
+                Progress.grant(player, "sew");
+                if (f.crossDimension()) Progress.grant(player, "dimensions");
+                else if (f.span() >= 1000) Progress.grant(player, "far");
+            }
+        }
         Ourlet.LOGGER.info("Pli #{} cousu : {} {} {} <-> {} {} {}{}", f.id, a.dim(), a.pos().toShortString(), a.face(),
             b.dim(), b.pos().toShortString(), b.face(), f.temporary() ? " (de poche)" : "");
         return f;
@@ -250,7 +272,7 @@ public final class Folds {
 
     /** Force le chargement du tronçon (chunk) d'un bout ; faux s'il l'était déjà (par /forceload ou un autre pli). */
     private static boolean force(ServerLevel level, BlockPos pos) {
-        if (level == null) return false;
+        if (level == null || !com.ourlet.OurletConfig.forceLoad) return false;
         String dim = Compat.dim(level);
         for (Fold o : ALL) {
             if ((o.forcedA && sameChunk(o.a, dim, pos)) || (o.forcedB && sameChunk(o.b, dim, pos))) return false;

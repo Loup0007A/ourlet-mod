@@ -114,7 +114,7 @@ public final class ClientSelfTest {
         });
         step("capture du carnet (passage)", 20, () -> shot("04_carnet_pass"));
         step("carnet : à travers le pli", 2, () -> {
-            if (com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen sc) sc.jump(3, 2, 40);
+            if (com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen sc) sc.jump(3, 3, 40);
             check(com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen, "le carnet est ouvert");
         });
         step("capture du carnet (relais)", 20, () -> shot("05_carnet_relay"));

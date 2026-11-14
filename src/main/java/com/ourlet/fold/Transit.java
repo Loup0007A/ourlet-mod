@@ -89,7 +89,8 @@ public final class Transit {
     private static boolean eligible(Entity e) {
         return e.isAlive() && !e.isSpectator() && !e.isPassenger() && !e.isVehicle()
             && !(e instanceof Display) && !(e instanceof HangingEntity) && !(e instanceof Marker)
-            && !(e instanceof AreaEffectCloud) && !(e instanceof LightningBolt);
+            && !(e instanceof AreaEffectCloud) && !(e instanceof LightningBolt)
+            && !com.ourlet.OurletConfig.blacklist.contains(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).toString());
     }
 
     private static double half(AABB bb, Direction.Axis axis) {
@@ -194,6 +195,8 @@ public final class Transit {
             PLAYER_VEL.put(p.getUUID(), v2);
             p.setDeltaMovement(v2);
             Compat.syncMotion(p);
+            Progress.grant(p, "pass");
+            if (v2.length() > 1.0) Progress.grant(p, "fling");
         } else if (to != level) {
             // autre dimension : l'entité est recréée dans l'autre monde, avec sa vitesse
             moved = Compat.moveAcross(e, to, new Vec3(x, y, z), v2, yaw, pitch);

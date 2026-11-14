@@ -5,7 +5,8 @@
     "mc1201"
   ],
   "delete": [
-    "resources/data/ourlet/recipe"
+    "resources/data/ourlet/recipe",
+    "resources/data/ourlet/advancement"
   ],
   "rewrites": [
     [

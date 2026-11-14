@@ -258,6 +258,7 @@ def build():
         step(f2, 'sew.3', pb, 80, [move('ourlet:spatial_needle', (pb[0] - 18, pb[1] - 14), (pb[0] - 6, pb[1] - 4))]),
         step(f2, 'sew.4', None, 70),
         step(f2, 'sew.5', pa, 70),
+        step(f2, 'sew.6', None, 80),
     ])
 
     # 2. Le passage : un sol cousu à un mur
@@ -317,6 +318,7 @@ def build():
     sb = face_center((5, 1, 1), 'south')
     ore = face_center((5, 1, 3), 'top')
     chapter('relay', 'minecraft:diamond_pickaxe', [
+        step(f0, 'relay.0', sa, 80),
         step(f0, 'relay.1', sa, 70),
         step(f0, 'relay.2', ore, 80, [move('minecraft:diamond_pickaxe', (sa[0] + 16, sa[1] - 10), (sa[0] + 6, sa[1] - 2))]),
         step(f1, 'relay.3', sa, 80, [move('minecraft:diamond', (ore[0], ore[1] - 4), (sb[0], sb[1]), None,

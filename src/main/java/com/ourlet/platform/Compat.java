@@ -78,11 +78,27 @@ public final class Compat {
         //#endif
     }
 
+    /** Un message d'Ourlet dans la barre d'action (le « regard » se tait un instant pour le laisser lire). */
     public static void actionBar(ServerPlayer p, Component message) {
+        com.ourlet.fold.Gaze.hush(p);
+        actionBarRaw(p, message);
+    }
+
+    public static void actionBarRaw(ServerPlayer p, Component message) {
         //#if mc26
         //$$ p.sendOverlayMessage(message);
         //#else
         p.displayClientMessage(message, true);
+        //#endif
+    }
+
+    /** Opérateur du serveur (niveau 2 ou plus) ? */
+    public static boolean isOp(ServerPlayer p) {
+        MinecraftServer server = level(p).getServer();
+        //#if mc26
+        //$$ return server.getPlayerList().isOp(new net.minecraft.server.players.NameAndId(p.getGameProfile()));
+        //#else
+        return server.getPlayerList().isOp(p.getGameProfile());
         //#endif
     }
 

@@ -141,7 +141,10 @@ public final class Relay {
         } finally {
             busy = false;
         }
-        if (done) pullDrops(level, home, rp, end.here());
+        if (done) {
+            pullDrops(level, home, rp, end.here());
+            Progress.grant(player, "relay");
+        }
         return true;
     }
 
