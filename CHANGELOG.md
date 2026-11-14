@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.1
+
+- Sur un serveur qui rame, un joueur qui marchait dans une couture pouvait ressortir projeté (et gagner « Lance-pierre » sans le vouloir) : sa vitesse est maintenant la moyenne de ses trois derniers ticks.
+- Tests automatiques plus patients avec un serveur en retard.
+
+Fix: on a lagging server, walking into a seam no longer flings you out the other side.
+
 ## 2.0.0 — Haute couture
 
 - **Grandes coutures 3×3** : une **Bobine** (2 planches + 1 ficelle) dans l'autre main, et l'aiguille coud un patchwork de 3×3 faces. Assez grand pour les chevaux, les bateaux, les wagonnets ; chaque carré mène à son jumeau.
