@@ -42,6 +42,11 @@ public final class Transit {
     private static final Map<UUID, Vec3> PLAYER_VEL = new HashMap<>();
     private static int passages;
 
+    /** Pour le test automatique : où et à quelle vitesse chaque entité est ressortie (rempli seulement en test). */
+    public record Exit(Vec3 pos, Vec3 velocity) {}
+
+    public static final Map<Integer, Exit> TEST_EXITS = new HashMap<>();
+
     public static void reset() {
         COOLDOWNS.clear();
         CONTACT.clear();
@@ -198,6 +203,7 @@ public final class Transit {
             Compat.syncMotion(e);
         }
         passages++;
+        if (com.ourlet.debug.ServerSelfTest.enabled()) TEST_EXITS.put(e.getId(), new Exit(new Vec3(x, y, z), v2));
         Effects.transit(level, here, there, f.color, bb.getSize());
         return true;
     }

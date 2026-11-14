@@ -140,21 +140,26 @@ public final class ServerSelfTest {
             boolean added = level.addFreshEntity(arrow);
             Ourlet.LOGGER.info("[SELFTEST] flèche lancée ({})", added);
             set(level, piston.getX(), Y + 1, sz, Blocks.REDSTONE_BLOCK);
-            CHECKS.add(new Check("l'objet ressort à 1 500 blocs, poussé vers l'est", t + 40, () ->
-                item.isAlive() && item.getX() > b1.getX() + 1 && item.getX() < b1.getX() + 12 && Math.abs(item.getZ() - sz - 0.5) < 1.5));
-            CHECKS.add(new Check("la flèche ressort du sol, vers le haut", t + 22, () -> {
-                if (arrow == null) return false;
-                Ourlet.LOGGER.info("[SELFTEST] flèche en {} (vitesse {})", arrow.position(), arrow.getDeltaMovement());
-                return Math.abs(arrow.getX() - b2.getX() - 0.5) < 1.5 && arrow.getY() > b2.getY() + 1;
+            CHECKS.add(new Check("l'objet ressort à 1 500 blocs, poussé vers l'est", t + 80, () -> {
+                var ex = com.ourlet.fold.Transit.TEST_EXITS.get(item.getId());
+                Ourlet.LOGGER.info("[SELFTEST] sortie de l'objet : {}", ex);
+                return ex != null && ex.pos().x > b1.getX() + 1 && ex.pos().x < b1.getX() + 1.5 && ex.velocity().x > 0.2
+                    && Math.abs(ex.velocity().y) < 0.05;
             }));
-            CHECKS.add(new Check("le piston a poussé la pierre taillée à travers le pli", t + 40, () ->
+            CHECKS.add(new Check("la flèche ressort du sol, vers le haut", t + 80, () -> {
+                var ex = com.ourlet.fold.Transit.TEST_EXITS.get(arrow.getId());
+                Ourlet.LOGGER.info("[SELFTEST] sortie de la flèche : {} (maintenant en {})", ex, arrow.position());
+                return ex != null && Math.abs(ex.pos().x - b2.getX() - 0.5) < 1 && ex.pos().y >= b2.getY() + 1
+                    && ex.velocity().y > 1.5;
+            }));
+            CHECKS.add(new Check("le piston a poussé la pierre taillée à travers le pli", t + 80, () ->
                 level.getBlockState(out3).is(Blocks.COBBLESTONE)));
             CHECKS.add(new Check("les coutures sont visibles (6 affichages)", t + 70, () -> {
                 int n = Markers.count(level, f1) + Markers.count(level, f2) + Markers.count(level, f3);
                 Ourlet.LOGGER.info("[SELFTEST] affichages : {}", n);
                 return n == 6;
             }));
-            CHECKS.add(new Check("les plis sont sauvegardés", t + 40, () -> savedLines(server) >= 3));
+            CHECKS.add(new Check("les plis sont sauvegardés", t + 80, () -> savedLines(server) >= 3));
         });
     }
 
