@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "ourlet:spool"
+    },
+    "title": {
+      "translate": "advancements.ourlet.patchwork.title"
+    },
+    "description": {
+      "translate": "advancements.ourlet.patchwork.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "ourlet:sew",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

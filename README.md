@@ -22,26 +22,41 @@ Il n'y a ni portail ni nouveau bloc : seulement une couture brodée sur deux blo
    (même dans une autre dimension) : un **pli de poche** faufilé vers la maison s'ouvre pendant 20 secondes.
 9. **Ciseaux et redstone** — clic droit sur une couture avec des ciseaux : ouvert → **sens unique** → **fermé**.
    Un signal de redstone à côté d'un bloc cousu ferme le pli, comme une porte. La couture se resserre quand le pli se ferme.
-
 10. **Le regard** — vise une couture : la barre d'action dit où elle mène, son état et le bloc que tu toucherais de l'autre côté.
-11. **En multijoueur** — seuls le propriétaire d'un pli et les opérateurs peuvent le découdre ou le couper ; tout le monde peut le traverser.
+11. **En multijoueur** — seuls le propriétaire d'un pli et les opérateurs peuvent le découdre, le couper, le teindre ou le nommer ; tout le monde peut le traverser.
+
+### Haute couture (2.0)
+
+12. **Grandes coutures 3×3** — une **Bobine** dans l'autre main : l'aiguille coud un patchwork de 3×3 faces,
+    assez grand pour les chevaux, les bateaux et les wagonnets. Chaque carré mène à son jumeau.
+13. **Teintures** — clic droit sur une couture avec l'une des 16 teintures : les deux bouts changent de couleur.
+14. **Étiquettes** — une étiquette renommée donne un nom au pli, affiché quand on le vise et en titre à l'arrivée.
+15. **Slime et miel** — une boule de slime rend le fil **élastique** (on ressort 1,5 fois plus vite),
+    un rayon de miel le **cire** (on ressort au ralenti). Une couture cirée au plafond, cousue au sol : une chute sans fin.
+16. **Entonnoirs** — un entonnoir tourné vers un bloc cousu envoie ses objets à travers le pli, directement dans
+    le coffre qui touche l'autre couture. Des tuyaux d'objets de n'importe quelle longueur, même entre dimensions.
+17. **Le fil d'Ariane** — dé à coudre en main, une ligne de points montre la direction de la maison.
+18. **Du style** — la couture se coud point par point, gonfle quand on la traverse, aspire des lettres d'enchantement ;
+    un ruban de fil suit ce qui vient de passer ; un titre annonce la destination des longs voyages.
 
 ### Le Carnet de couture
 
 Dans un inventaire, survole l'Aiguille Spatiale ou le Dé à coudre et **maintiens [W]** : le carnet s'ouvre,
-façon *Ponder* de Create. Sept chapitres de maquettes brodées où les vrais objets traversent les plis,
+façon *Ponder* de Create. Onze chapitres de maquettes brodées où les vrais objets traversent les plis,
 avec des notes dans la marge, une frise des étapes, pause et navigation (← → ↑ ↓, espace).
 
 | | |
 |---|---|
 | Aiguille | perle de l'Ender (haut-droite), lingot de fer (centre), ficelle (bas-gauche) — 48 coutures |
 | Dé à coudre | 5 pépites d'or autour d'une perle de l'Ender (`NNN` / `NPN`) — 64 plis de poche |
+| Bobine | une ficelle entre deux planches (en colonne) — dans l'autre main pour les coutures 3×3 |
+| Enchantements | Solidité et Raccommodage (à l'enclume) sur l'aiguille et le dé |
 | Limite | 12 plis permanents par joueur ; un pli de poche à la fois |
 | Chargement | les deux bouts d'un pli restent chargés : ce qui passe arrive tout de suite |
 | Commande | `/ourlet list` |
 
-Les deux bouts d'un pli portent la même couleur de fil (rose, indigo, safran, sauge). Neuf progrès, dans un onglet brodé,
-accompagnent la découverte du mod.
+Les deux bouts d'un pli portent la même couleur de fil. Quinze progrès, dans un onglet brodé,
+accompagnent la découverte du mod, et tout est rangé dans l'onglet créatif **Ourlet**.
 
 ### Configuration du serveur
 
@@ -83,4 +98,6 @@ lance un vrai serveur et un vrai client de test, publie la release puis envoie l
 touches one comes out of the other with its speed preserved, pistons push blocks through, and you can mine,
 build and flip levers on the far side by aiming at the seam. Folds work across dimensions, the Thimble opens a
 20-second pocket fold back home, shears and redstone make folds one-way or closed, and the Sewing Notebook
-(hold [W] over the needle) is a Ponder-style animated tutorial.
+(hold [W] over the needle) is a Ponder-style animated tutorial. Version 2.0 adds 3×3 patchwork seams (Spool),
+16 dyes, name tags, elastic (slime) and waxed (honey) threads for endless gentle falls, hoppers that pipe items
+through folds, and a lot of embroidered flair.

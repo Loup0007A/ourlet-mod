@@ -39,6 +39,9 @@ BLOCKS = {
     'cobble': ((128, 128, 132), (106, 106, 112), (92, 92, 98), (150, 150, 154)),
     'redstone': ((200, 40, 36), (160, 28, 28), (140, 22, 22), (240, 80, 70)),
     'planks': ((196, 160, 104), (170, 136, 86), (150, 118, 74), (184, 148, 94)),
+    'hopper': ((92, 92, 98), (72, 72, 78), (58, 58, 64), (140, 140, 148)),
+    'chest': ((176, 122, 62), (146, 98, 48), (124, 82, 40), (70, 46, 26)),
+    'honey': ((236, 164, 40), (208, 136, 28), (186, 118, 22), (250, 200, 90)),
 }
 THREAD = {
     'rose': ((224, 122, 149), (150, 62, 92)),
@@ -46,6 +49,10 @@ THREAD = {
     'saffron': ((240, 169, 46), (166, 98, 20)),
     'sage': ((127, 174, 136), (70, 110, 80)),
     'basting': ((250, 246, 232), (150, 140, 120)),
+    'light_blue': ((125, 183, 224), (60, 110, 150)),
+    'lime': ((140, 192, 79), (70, 110, 40)),
+    'yellow': ((237, 203, 69), (150, 120, 20)),
+    'magenta': ((196, 91, 184), (110, 40, 100)),
 }
 INK = (70, 52, 46)
 
@@ -68,8 +75,9 @@ class Scene:
         self.marks = []      # traits pointillés (fil entre deux points 3D)
         self.points = {}
 
-    def put(self, x, y, z, kind):
-        self.blocks[(x, y, z)] = kind
+    def put(self, x, y, z, kind, off=None):
+        """{@code off} : un petit décalage (vue éclatée), pour laisser voir une couture cachée par un voisin."""
+        self.blocks[(x, y, z)] = (kind, off) if off else kind
         return self
 
     def plate(self, kinds=None):
@@ -110,16 +118,21 @@ class Scene:
         sh = [proj(0, 0, 0), proj(7, 0, 0), proj(7, 0, 7), proj(0, 0, 7)]
         d.polygon([(x + 3, y + 4) for x, y in sh], fill=(60, 44, 30, 60))
         order = sorted(self.blocks.items(), key=lambda kv: (kv[0][0] + kv[0][2], kv[0][1]))
+        solid = {k for k, v in self.blocks.items() if not isinstance(v, tuple)}
         for (x, y, z), kind in order:
+            off = (0, 0, 0)
+            if isinstance(kind, tuple):
+                kind, off = kind
             top, left, right, motif = BLOCKS[kind]
+            plain = off == (0, 0, 0)
             for face, col in (('south', left), ('east', right), ('top', top)):
-                if face == 'top' and (x, y + 1, z) in self.blocks:
+                if plain and face == 'top' and (x, y + 1, z) in solid:
                     continue
-                if face == 'south' and (x, y, z + 1) in self.blocks:
+                if plain and face == 'south' and (x, y, z + 1) in solid:
                     continue
-                if face == 'east' and (x + 1, y, z) in self.blocks:
+                if plain and face == 'east' and (x + 1, y, z) in solid:
                     continue
-                poly = [proj(*v) for v in FACES[face](x, y, z)]
+                poly = [proj(v[0] + off[0], v[1] + off[1], v[2] + off[2]) for v in FACES[face](x, y, z)]
                 d.polygon(poly, fill=col)
                 stitch_face(img, poly, motif, kind)
                 d.line(poly + [poly[0]], fill=shade(col, 0.72), width=1)
@@ -325,6 +338,90 @@ def build():
                                           (sa[0], sa[1]), (sa[0] + 18, sa[1] + 10))]),
         step(f1, 'relay.4', sa, 80, [move('minecraft:torch', (sa[0] + 16, sa[1] - 10), (sa[0] + 4, sa[1] - 2))]),
         step(f1, 'relay.5', None, 70),
+    ])
+
+    # Les grandes coutures (3×3, bobine)
+    s = Scene().plate()
+    for y in (1, 2, 3):
+        for z in (3, 4, 5):
+            s.put(1, y, z, 'stone')
+        for x in (3, 4, 5):
+            s.put(x, y, 1, 'stone')
+    f0 = frame('patchwork', 0, s)
+    p1 = s.copy()
+    for y in (1, 2, 3):
+        for z in (3, 4, 5):
+            p1.seam((1, y, z), 'east', 'indigo')
+    f1 = frame('patchwork', 1, p1)
+    p2 = p1.copy()
+    for y in (1, 2, 3):
+        for x in (3, 4, 5):
+            p2.seam((x, y, 1), 'south', 'indigo')
+    f2 = frame('patchwork', 2, p2)
+    ca, cb = face_center((1, 2, 4), 'east'), face_center((4, 2, 1), 'south')
+    chapter('patchwork', 'ourlet:spool', [
+        step(f1, 'patchwork.1', ca, 80, [move('ourlet:spool', (ca[0] + 18, ca[1] - 16), (ca[0] + 6, ca[1] - 6))]),
+        step(f2, 'patchwork.2', cb, 80, [move('ourlet:spatial_needle', (cb[0] - 18, cb[1] - 14), (cb[0] - 6, cb[1] - 4))]),
+        step(f2, 'patchwork.3', cb, 90, [move('minecraft:minecart', (ca[0] + 40, ca[1] + 20), (ca[0], ca[1]), None,
+                                               (cb[0], cb[1]), (cb[0] - 30, cb[1] + 16))]),
+    ])
+
+    # Teintures et étiquettes
+    base = Scene().plate()
+    for y in (1, 2):
+        base.put(1, y, 4, 'stone')
+        base.put(5, y, 1, 'stone')
+    a = ((1, 1, 4), 'east')
+    b = ((5, 1, 1), 'south')
+    f0 = frame('dyes', 0, base.copy().seam(*a, 'rose').seam(*b, 'rose'))
+    f1 = frame('dyes', 1, base.copy().seam(*a, 'light_blue').seam(*b, 'light_blue')
+               .thread_arc((2, 1.5, 4.5), (5.5, 1.5, 2), 'light_blue'))
+    pa, pb = face_center(*a), face_center(*b)
+    chapter('dyes', 'minecraft:light_blue_dye', [
+        step(f0, 'dyes.1', pa, 70, [move('minecraft:light_blue_dye', (pa[0] + 18, pa[1] - 16), (pa[0] + 5, pa[1] - 4))]),
+        step(f1, 'dyes.1', pb, 50),
+        step(f1, 'dyes.2', pb, 90, [move('minecraft:name_tag', (pb[0] - 20, pb[1] - 14), (pb[0] - 6, pb[1] - 4))]),
+        step(f1, 'dyes.3', None, 70),
+    ])
+
+    # Slime et miel
+    s = Scene().plate()
+    for y in (1, 2):
+        s.put(5, y, 1, 'stone')
+    fe = frame('tension', 0, s.copy().seam((1, 0, 4), 'top', 'lime').seam((5, 1, 1), 'east', 'lime'))
+    fd = frame('tension', 1, s.copy().seam((1, 0, 4), 'top', 'yellow').seam((5, 1, 1), 'east', 'yellow'))
+    top = face_center((1, 0, 4), 'top')
+    out = face_center((5, 1, 1), 'east')
+    loop = Scene().plate().put(2, 4, 3, 'stone').seam((2, 0, 3), 'top', 'yellow')
+    fl = frame('tension', 2, loop)
+    lt = face_center((2, 0, 3), 'top')
+    under = proj(2.5, 4, 3.5)
+    chapter('tension', 'minecraft:slime_ball', [
+        step(fe, 'tension.1', out, 90, [move('minecraft:slime_ball', (top[0], top[1] - 44), (top[0], top[1] - 4), None,
+                                             (out[0], out[1]), (out[0] + 56, out[1] + 26), (out[0] + 70, out[1] + 46))]),
+        step(fd, 'tension.2', out, 90, [move('minecraft:honeycomb', (top[0], top[1] - 44), (top[0], top[1] - 4), None,
+                                             (out[0], out[1]), (out[0] + 6, out[1] + 6))]),
+        step(fl, 'tension.3', lt, 100, [move('minecraft:white_wool', (under[0], under[1] + 4), (lt[0], lt[1] - 4), None,
+                                             (under[0], under[1] + 4), (lt[0], lt[1] - 4), None,
+                                             (under[0], under[1] + 4), (lt[0], lt[1] - 4))]),
+    ])
+
+    # Les entonnoirs
+    s = Scene().plate()
+    s.put(1, 1, 4, 'stone').put(2, 1, 4, 'hopper', (0.45, 0, 0))
+    s.put(5, 1, 1, 'stone').put(5, 1, 2, 'chest', (0, 0, 0.45))
+    s.seam((1, 1, 4), 'east', 'saffron')
+    s.seam((5, 1, 1), 'south', 'saffron')
+    f0 = frame('hoppers', 0, s)
+    hp = face_center((2, 1, 4), 'top')
+    sa = face_center((1, 1, 4), 'east')
+    sb = face_center((5, 1, 1), 'south')
+    ch = face_center((5, 1, 2), 'top')
+    chapter('hoppers', 'minecraft:hopper', [
+        step(f0, 'hoppers.1', hp, 90, [move('minecraft:iron_ingot', (hp[0], hp[1] - 20), (hp[0], hp[1]), (sa[0], sa[1]))]),
+        step(f0, 'hoppers.2', ch, 90, [move('minecraft:iron_ingot', (hp[0], hp[1] - 20), (hp[0], hp[1]), (sa[0], sa[1]), None,
+                                            (sb[0], sb[1]), (ch[0], ch[1]))]),
+        step(f0, 'hoppers.3', sb, 80),
     ])
 
     # 5. Le dé à coudre : la maison à gauche, une grotte lointaine à droite

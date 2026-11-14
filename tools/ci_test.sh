@@ -4,7 +4,7 @@
 # Usage : tools/ci_test.sh <jar> <loader: forge|neoforge> <version du loader> <nom du test>
 #   ex.   tools/ci_test.sh out/ourlet-2.3.0-forge-1.21.1.jar forge 1.21.1-52.0.7 forge-1.21.1
 set -u
-JAR="$(realpath "$1")"; LOADER="$2"; LV="$3"; NAME="$4"
+JAR="$(realpath "$1")"; LOADER="$2"; LV="$3"; NAME="$4"; ROOT="$PWD"
 OUT="$PWD/ci-out/$NAME"; mkdir -p "$OUT/screenshots"
 W="$PWD/ci-work/$NAME"; rm -rf "$W"; mkdir -p "$W"; cd "$W"
 
@@ -47,11 +47,18 @@ fi
 LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a -s "-screen 0 1280x720x24" timeout 1700 \
   portablemc --main-dir "$PWD/mcmain" start --mc-dir "$PWD/client" "${LAUNCH[@]}" "$VERSION" \
   -u Tester --join-server 127.0.0.1 --resolution 1280x720 \
-  --jvm-arg=-Xmx3G,-Dourlet.clienttest=true > "$OUT/clienttest.log" 2>&1
+  --jvm-arg="-Xmx3G,-Dourlet.clienttest=true${GIF:+,-Dourlet.gif=true}" > "$OUT/clienttest.log" 2>&1
 echo "client exit $?"
 grep -E "CLIENTTEST|SELFTEST|Ourlet|Exception|ERROR" "$OUT/clienttest.log" | head -150
 grep -q "CLIENTTEST\] RESULT" "$OUT/clienttest.log" || tail -80 "$OUT/clienttest.log"
-cp client/screenshots/*.png "$OUT/screenshots/" 2>/dev/null || true
+for f in client/screenshots/*.png; do
+  case "$(basename "$f")" in gif_*) ;; *) cp "$f" "$OUT/screenshots/" ;; esac
+done
+# rafales pour l'animation de la description : réduites en JPEG (l'animation est montée ensuite par tools/make_gif.py)
+if ls client/screenshots/gif_*.png > /dev/null 2>&1; then
+  pip install -q pillow > /dev/null 2>&1 || true
+  python3 "$ROOT/tools/gif_frames.py" client/screenshots "$OUT/gif" || true
+fi
 cp client/crash-reports/*.txt "$OUT/" 2>/dev/null || true
 ls "$OUT/screenshots" | wc -l
 pkill -f "nogui" || true

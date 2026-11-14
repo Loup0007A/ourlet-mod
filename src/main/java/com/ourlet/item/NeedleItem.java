@@ -79,39 +79,59 @@ public class NeedleItem extends Item {
             return InteractionResult.FAIL;
         }
         Anchor here = Folds.anchor(sl, pos, face, sp.getDirection());
+        // une bobine dans l'autre main : grande couture 3×3
+        boolean spool = sp.getItemInHand(hand == net.minecraft.world.InteractionHand.MAIN_HAND
+            ? net.minecraft.world.InteractionHand.OFF_HAND : net.minecraft.world.InteractionHand.MAIN_HAND).getItem()
+            == com.ourlet.registry.OurletItems.SPOOL.get();
 
         if (pending == null || !Folds.intact(pending.anchor())) {
-            Compat.actionBar(sp, Component.translatable("ourlet.needle.first"));
-            Folds.setPending(uuid, new Folds.Pending(here, sl.getGameTime()));
-            sl.playSound(null, pos, SoundEvents.WOOL_PLACE, SoundSource.PLAYERS, 0.8f, 1.5f);
+            int size = spool ? 3 : 1;
+            if (size > 1 && !Folds.sewable(sl, here, size)) {
+                Compat.actionBar(sp, Component.translatable("ourlet.needle.patch_space"));
+                return InteractionResult.FAIL;
+            }
+            Compat.actionBar(sp, Component.translatable(size > 1 ? "ourlet.needle.first_patch" : "ourlet.needle.first"));
+            Folds.setPending(uuid, new Folds.Pending(here, sl.getGameTime(), size));
+            sl.playSound(null, pos, SoundEvents.WOOL_PLACE, SoundSource.PLAYERS, 0.8f, size > 1 ? 1.1f : 1.5f);
             return InteractionResult.SUCCESS;
         }
         Anchor first = pending.anchor();
-        if (first.dim().equals(here.dim()) && first.pos().equals(pos)) {
+        int size = pending.size();
+        if (first.dim().equals(here.dim()) && overlaps(first, here, size)) {
             Compat.actionBar(sp, Component.translatable("ourlet.needle.same_block"));
             return InteractionResult.FAIL;
         }
         ServerLevel firstLevel = Folds.level(first);
-        if (firstLevel == null || Folds.find(firstLevel, first.pos(), first.face()) != null) {
-            Folds.setPending(uuid, new Folds.Pending(here, sl.getGameTime()));
+        if (firstLevel == null || !Folds.sewable(firstLevel, first, size)) {
+            Folds.setPending(uuid, new Folds.Pending(here, sl.getGameTime(), spool ? 3 : 1));
             Compat.actionBar(sp, Component.translatable("ourlet.needle.first"));
             return InteractionResult.SUCCESS;
         }
         if (!com.ourlet.OurletConfig.crossDimension && !first.dim().equals(here.dim())) {
-            Folds.setPending(uuid, new Folds.Pending(here, sl.getGameTime()));
+            Folds.setPending(uuid, new Folds.Pending(here, sl.getGameTime(), spool ? 3 : 1));
             Compat.actionBar(sp, Component.translatable("ourlet.needle.no_dimensions"));
             return InteractionResult.SUCCESS;
+        }
+        if (size > 1 && !Folds.sewable(sl, here, size)) {
+            Compat.actionBar(sp, Component.translatable("ourlet.needle.patch_space"));
+            return InteractionResult.FAIL;
         }
         if (!sp.isCreative() && Folds.owned(uuid) >= com.ourlet.OurletConfig.maxFolds) {
             Compat.actionBar(sp, Component.translatable("ourlet.needle.too_many", com.ourlet.OurletConfig.maxFolds));
             return InteractionResult.FAIL;
         }
-        Fold f = Folds.create(uuid, first, here);
+        Fold f = Folds.create(uuid, first, here, -1, size);
         Folds.setPending(uuid, null);
-        if (!sp.isCreative()) Compat.hurtNeedle(needle, sp, hand);
+        if (!sp.isCreative()) for (int i = 0; i < (size > 1 ? 3 : 1) && !needle.isEmpty(); i++) Compat.hurtNeedle(needle, sp, hand);
         Compat.actionBar(sp, f.crossDimension() ? Component.translatable("ourlet.needle.sewn_dimensions")
             : Component.translatable("ourlet.needle.sewn", f.span()));
         return InteractionResult.SUCCESS;
+    }
+
+    /** Deux coutures du même plan qui se chevaucheraient. */
+    private static boolean overlaps(Anchor a, Anchor b, int size) {
+        for (var c : a.cells(size)) for (var d : b.cells(size)) if (c.equals(d)) return true;
+        return false;
     }
 
     //#if mc26
@@ -136,6 +156,7 @@ public class NeedleItem extends Item {
         out.accept(Component.translatable("item.ourlet.spatial_needle.tip1").withStyle(ChatFormatting.GRAY));
         out.accept(Component.translatable("item.ourlet.spatial_needle.tip2").withStyle(ChatFormatting.GRAY));
         out.accept(Component.translatable("item.ourlet.spatial_needle.tip3").withStyle(ChatFormatting.DARK_GRAY));
+        out.accept(Component.translatable("item.ourlet.spatial_needle.tip4").withStyle(ChatFormatting.DARK_GRAY));
         com.ourlet.carnet.CarnetHint.tooltip(out);
     }
 }

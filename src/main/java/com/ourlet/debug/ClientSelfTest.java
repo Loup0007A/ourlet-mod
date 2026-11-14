@@ -23,6 +23,10 @@ public final class ClientSelfTest {
     private ClientSelfTest() {}
 
     private static final boolean ENABLED = Boolean.getBoolean("ourlet.clienttest");
+    /** Captures en rafale pour l'animation de la description (seulement si -Dourlet.gif=true). */
+    private static final boolean GIF = Boolean.getBoolean("ourlet.gif");
+    private static String rec;
+    private static int recN;
 
     private record Step(String label, BooleanSupplier ready, Runnable action, int minWait) {}
 
@@ -60,6 +64,15 @@ public final class ClientSelfTest {
         //#endif
     }
 
+    /** Commence (ou arrête, avec null) une rafale de captures : une toutes les 2 ticks. */
+    private static void record(String scene) {
+        if (!GIF) return;
+        rec = scene;
+        recN = 0;
+        if (scene != null) com.ourlet.client.ClientCompat.clearChat();
+        Ourlet.LOGGER.info("[CLIENTTEST] rafale {}", scene == null ? "terminée" : scene);
+    }
+
     private static void look(float yaw, float pitch) {
         var p = mc().player;
         if (p == null) return;
@@ -81,7 +94,10 @@ public final class ClientSelfTest {
 
     private static void build() {
         built = true;
-        step("regarder le mur cousu", 1, () -> look(0f, 3f));
+        step("regarder le mur cousu", 1, () -> {
+            look(0f, 3f);
+            record("a");
+        });
         step("capture de la couture", 30, () -> shot("01_seam_wall"));
         step("casser à travers le pli", 10, () -> {
             HitResult h = mc().hitResult;
@@ -102,28 +118,52 @@ public final class ClientSelfTest {
             mc().options.keyUp.setDown(false);
             check(true, "le joueur a traversé le pli (" + (int) startX + " -> " + (int) mc().player.getX() + ")");
         });
-        step("de l'autre côté", 60, () -> {
+        step("arrivée", 34, () -> record(null));
+        step("regarder la vitrine", 4, () -> {
+            // la grande couture cirée où le mouton tombe sans fin : à droite, un peu en contrebas
+            look(-60f, 6f);
+            com.ourlet.client.ClientCompat.hideGui(true);
+            record("b");
+        });
+        step("fin de la vitrine", 90, () -> {
+            record(null);
+            com.ourlet.client.ClientCompat.hideGui(false);
+            shot("07_endless_fall");
+        });
+        step("de l'autre côté", 20, () -> {
             look(180f, 10f);
         });
         step("capture de l'autre côté", 20, () -> shot("03_other_side"));
         step("ouvrir le carnet", 5, () -> {
-            check(com.ourlet.client.CarnetScreen.chapters().size() == 7, "le carnet a 7 chapitres");
+            check(com.ourlet.client.CarnetScreen.chapters().size() == 11, "le carnet a 11 chapitres");
             var sc = new com.ourlet.client.CarnetScreen(0, null);
-            sc.jump(1, 0, 34);
+            if (GIF) sc.play(1, 0);
+            else sc.jump(1, 0, 34);
             com.ourlet.client.ClientCompat.open(sc);
+            record("c");
         });
-        step("capture du carnet (passage)", 20, () -> shot("04_carnet_pass"));
+        step("feuilleter le carnet", GIF ? 80 : 1, () -> record(null));
+        step("capture du carnet (passage)", 2, () -> {
+            if (com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen sc) sc.jump(1, 0, 34);
+        });
+        step("capture du carnet (passage) 2", 20, () -> shot("04_carnet_pass"));
         step("carnet : à travers le pli", 2, () -> {
             if (com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen sc) sc.jump(3, 3, 40);
             check(com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen, "le carnet est ouvert");
         });
         step("capture du carnet (relais)", 20, () -> shot("05_carnet_relay"));
         step("carnet : ciseaux", 2, () -> {
-            if (com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen sc) sc.jump(5, 3, 60);
+            if (com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen sc) sc.jump(9, 3, 60);
         });
         step("capture du carnet (redstone)", 20, () -> {
             shot("06_carnet_control");
+            if (com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen sc) sc.jump(4, 2, 50);
         });
+        step("capture du carnet (3×3)", 20, () -> {
+            shot("08_carnet_patchwork");
+            if (com.ourlet.client.ClientCompat.screen() instanceof com.ourlet.client.CarnetScreen sc) sc.jump(7, 1, 55);
+        });
+        step("capture du carnet (entonnoirs)", 20, () -> shot("09_carnet_hoppers"));
         step("fermer le carnet", 5, () -> com.ourlet.client.ClientCompat.open(null));
         step("fin", 10, () -> {
             Ourlet.LOGGER.info("[CLIENTTEST] RESULT: {}", failures == 0 ? "OK" : "FAIL " + failures);
@@ -153,6 +193,7 @@ public final class ClientSelfTest {
             build();
             Ourlet.LOGGER.info("[CLIENTTEST] début ({} étapes)", STEPS.size());
         }
+        if (rec != null && inGame % 2 == 0) shot(String.format("gif_%s_%03d", rec, recN++));
         Step s = STEPS.peek();
         if (s == null) return;
         waited++;

@@ -67,6 +67,10 @@
     [
       "re:\\bGuiGraphics\\b",
       "GuiGraphicsExtractor"
+    ],
+    [
+      "Items.LIGHT_BLUE_DYE",
+      "Items.DYE.lightBlue()"
     ]
   ]
 }

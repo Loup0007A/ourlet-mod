@@ -205,4 +205,30 @@ public final class Compat {
         if (done && !creative) tool.mineBlock(level, state, pos, player);
         return done;
     }
+
+    /** Le nom donné à un objet sur l'enclume, ou null. */
+    public static String customName(ItemStack stack) {
+        //#if mc1201
+        //$$ return stack.hasCustomHoverName() ? stack.getHoverName().getString() : null;
+        //#else
+        Component c = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
+        return c == null ? null : c.getString();
+        //#endif
+    }
+
+    /** Une particule visible d'un seul joueur. */
+    public static void particleFor(ServerPlayer p, ParticleOptions particle, net.minecraft.world.phys.Vec3 at) {
+        //#if mc26
+        //$$ level(p).sendParticles(p, particle, false, false, at.x, at.y, at.z, 1, 0, 0, 0, 0);
+        //#else
+        level(p).sendParticles(p, particle, false, at.x, at.y, at.z, 1, 0, 0, 0, 0);
+        //#endif
+    }
+
+    /** Un titre (et son sous-titre) à l'écran d'un joueur. */
+    public static void title(ServerPlayer p, Component title, Component subtitle, int in, int stay, int out) {
+        p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(in, stay, out));
+        p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(subtitle));
+        p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(title));
+    }
 }

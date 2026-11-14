@@ -156,11 +156,54 @@ public final class ServerSelfTest {
         Folds.setMode(f6, Fold.ONLY_B);
         final Fold f4f = f4;
 
-        log(Folds.all().size() == 6 && f4 != null, "six plis cousus, dont un vers le Nether");
+        // 7. Une grande couture 3×3 : un sol vers un mur ; un objet tombé sur un coin ressort par le coin jumeau.
+        BlockPos a7 = new BlockPos(sx + 80, Y, sz), b7 = new BlockPos(sx + 1580, Y + 1, sz);
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                set(level, a7.getX() + i, Y, sz + j, Blocks.STONE);
+                set(level, b7.getX(), Y + 1 + i, sz + j, Blocks.STONE);
+            }
+        }
+        Fold f7 = Folds.create(TESTER, anchor(level, a7, Direction.UP, Direction.NORTH),
+            anchor(level, b7, Direction.EAST, Direction.NORTH), -1, 3);
+        // 8. Un fil élastique : on ressort plus vite.
+        BlockPos a8 = new BlockPos(sx + 90, Y, sz), b8 = new BlockPos(sx + 1590, Y, sz);
+        set(level, a8.getX(), Y, sz, Blocks.STONE);
+        set(level, b8.getX(), Y, sz, Blocks.STONE);
+        Fold f8 = Folds.create(TESTER, anchor(level, a8, Direction.UP, Direction.NORTH),
+            anchor(level, b8, Direction.EAST, Direction.NORTH));
+        Folds.setTension(f8, Fold.ELASTIC);
+        // 9. Un fil ciré au plafond, cousu au sol juste en dessous : une chute sans fin, tout en douceur.
+        BlockPos a9 = new BlockPos(sx + 100, Y, sz), b9 = new BlockPos(sx + 100, Y + 5, sz);
+        set(level, a9.getX(), Y, sz, Blocks.STONE);
+        set(level, b9.getX(), b9.getY(), sz, Blocks.STONE);
+        Fold f9 = Folds.create(TESTER, anchor(level, a9, Direction.UP, Direction.NORTH),
+            anchor(level, b9, Direction.DOWN, Direction.NORTH));
+        Folds.setTension(f9, Fold.DAMPED);
+        // 10. Un entonnoir qui se déverse dans un bloc cousu : les lingots arrivent dans un coffre à 1 500 blocs.
+        BlockPos a10 = new BlockPos(sx + 110, Y, sz), b10 = new BlockPos(sx + 1610, Y, sz), chest = b10.east();
+        set(level, a10.getX(), Y, sz, Blocks.STONE);
+        set(level, b10.getX(), Y, sz, Blocks.STONE);
+        set(level, chest.getX(), Y, sz, Blocks.CHEST);
+        Fold f10 = Folds.create(TESTER, anchor(level, a10, Direction.UP, Direction.NORTH),
+            anchor(level, b10, Direction.EAST, Direction.NORTH));
+        set(level, a10.getX(), Y + 1, sz, Blocks.HOPPER);
+        if (level.getBlockEntity(a10.above()) instanceof net.minecraft.world.level.block.entity.HopperBlockEntity h) {
+            h.setItem(0, new ItemStack(Items.IRON_INGOT, 3));
+        }
+        // 11. La teinture : le fil change de couleur, les coutures sont refaites.
+        Folds.recolor(f2, Fold.DYE_BASE + net.minecraft.world.item.DyeColor.RED.getId());
+
+        log(Folds.all().size() == 10 && f4 != null, "dix plis cousus, dont un vers le Nether et un 3×3");
+        log(f7.size == 3 && Folds.find(level, a7.east().south(), Direction.UP) != null
+            && Folds.find(level, a7.east(2), Direction.UP) == null, "la grande couture couvre 3×3 faces, pas plus");
+        log(f7.mapCell(f7.a, a7.east().south()).equals(new BlockPos(b7.getX(), Y, sz + 1)), "chaque carré a son jumeau");
+        log(Folds.forcedChunks() >= 8, "les tronçons des plis restent chargés (" + Folds.forcedChunks() + ")");
         log(java.nio.file.Files.exists(com.ourlet.OurletConfig.file()) && com.ourlet.OurletConfig.maxFolds == 12,
             "config/ourlet.properties écrit avec les valeurs par défaut");
         int advs = 0;
-        for (String a : new String[]{"root", "sew", "pass", "fling", "far", "dimensions", "relay", "snip", "pocket"}) {
+        for (String a : new String[]{"root", "sew", "pass", "fling", "far", "dimensions", "relay", "snip", "pocket",
+            "patchwork", "haute_couture", "named", "spring", "delivery", "loop"}) {
             //#if mc26
             //$$ if (server.getAdvancements().get(net.minecraft.resources.Identifier.fromNamespaceAndPath("ourlet", a)) != null) advs++;
             //#elif mc1201
@@ -169,7 +212,7 @@ public final class ServerSelfTest {
             if (server.getAdvancements().get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ourlet", a)) != null) advs++;
             //#endif
         }
-        log(advs == 9, "les 9 progrès sont chargés (" + advs + ")");
+        log(advs == 15, "les 15 progrès sont chargés (" + advs + ")");
         log(f4 != null && f4.crossDimension(), "le pli 4 relie deux dimensions");
         log(!f6.canEnter(f6.a) && f6.canEnter(f6.b), "le pli 6 est à sens unique");
         log(Fold.mapVector(f1.a, f1.b, new Vec3(0, -1, 0)).distanceTo(new Vec3(1, 0, 0)) < 1e-6,
@@ -186,6 +229,36 @@ public final class ServerSelfTest {
             Ourlet.LOGGER.info("[SELFTEST] flèche lancée ({})", added);
             set(level, piston.getX(), Y + 1, sz, Blocks.REDSTONE_BLOCK);
             ItemEntity item4 = drop(level, a4), item5 = drop(level, a5), item6 = drop(level, a6);
+            ItemEntity item7 = new ItemEntity(level, a7.getX() + 1.5, Y + 1.6, sz + 1.5, new ItemStack(Items.GOLD_INGOT));
+            item7.setDeltaMovement(0, -0.25, 0);
+            item7.setPickUpDelay(100);
+            level.addFreshEntity(item7);
+            ItemEntity item8 = drop(level, a8), item9 = drop(level, a9);
+            CHECKS.add(new Check("la grande couture fait ressortir l'objet par le coin jumeau", t + 80, () -> {
+                var ex = com.ourlet.fold.Transit.TEST_EXITS.get(item7.getId());
+                Ourlet.LOGGER.info("[SELFTEST] sortie 3×3 : {}", ex);
+                return ex != null && Math.abs(ex.pos().x - b7.getX() - 1.155) < 0.05 && Math.abs(ex.pos().z - (sz + 1.5)) < 0.3
+                    && ex.pos().y >= Y - 0.01 && ex.pos().y < Y + 1;
+            }));
+            CHECKS.add(new Check("le fil élastique lance plus fort", t + 80, () -> {
+                var ex = com.ourlet.fold.Transit.TEST_EXITS.get(item8.getId());
+                Ourlet.LOGGER.info("[SELFTEST] sortie élastique : {}", ex);
+                return ex != null && ex.velocity().x > 0.6;
+            }));
+            CHECKS.add(new Check("le fil ciré fait tomber sans fin, doucement", t + 80, () -> {
+                int n = com.ourlet.fold.Transit.TEST_COUNTS.getOrDefault(item9.getId(), 0);
+                Ourlet.LOGGER.info("[SELFTEST] chute sans fin : {} passages, y={}", n, item9.getY());
+                return n >= 3 && item9.isAlive() && item9.getY() > Y && item9.getY() < Y + 5;
+            }));
+            CHECKS.add(new Check("l'entonnoir envoie ses lingots dans le coffre, de l'autre côté", t + 80, () -> {
+                var c = net.minecraft.world.level.block.entity.HopperBlockEntity.getContainerAt(level, chest);
+                int iron = 0;
+                if (c != null) for (int i = 0; i < c.getContainerSize(); i++) if (c.getItem(i).is(Items.IRON_INGOT)) iron += c.getItem(i).getCount();
+                Ourlet.LOGGER.info("[SELFTEST] lingots dans le coffre : {} (transportés : {})", iron, com.ourlet.fold.Hoppers.delivered());
+                return iron == 3;
+            }));
+            CHECKS.add(new Check("le fil teint en rouge", t + 80, () ->
+                f2.color() == Fold.DYE_BASE + net.minecraft.world.item.DyeColor.RED.getId() && Markers.count(f2) == 2));
             CHECKS.add(new Check("l'objet passe dans le Nether et ressort du mur, vers l'est", t + 80, () -> {
                 var ex = com.ourlet.fold.Transit.TEST_EXITS.get(item4.getId());
                 Ourlet.LOGGER.info("[SELFTEST] sortie dans le Nether : {}", ex);
@@ -210,13 +283,13 @@ public final class ServerSelfTest {
             }));
             CHECKS.add(new Check("le piston a poussé la pierre taillée à travers le pli", t + 80, () ->
                 level.getBlockState(out3).is(Blocks.COBBLESTONE)));
-            CHECKS.add(new Check("les coutures sont visibles (12 affichages)", t + 70, () -> {
+            CHECKS.add(new Check("les coutures sont visibles (36 affichages)", t + 70, () -> {
                 int n = 0;
-                for (Fold f : new Fold[]{f1, f2, f3, f4f, f5, f6}) if (f != null) n += Markers.count(f);
+                for (Fold f : new Fold[]{f1, f2, f3, f4f, f5, f6, f7, f8, f9, f10}) if (f != null) n += Markers.count(f);
                 Ourlet.LOGGER.info("[SELFTEST] affichages : {}", n);
-                return n == 12;
+                return n == 36;
             }));
-            CHECKS.add(new Check("les plis sont sauvegardés", t + 80, () -> savedLines(server) >= 6));
+            CHECKS.add(new Check("les plis sont sauvegardés", t + 80, () -> savedLines(server) >= 10));
         });
     }
 
@@ -357,7 +430,26 @@ public final class ServerSelfTest {
         sp.setShiftKeyDown(false);
         var r1 = NeedleItem.sew(sp, level, wallA, Direction.NORTH, needle, InteractionHand.MAIN_HAND);
         var r2 = NeedleItem.sew(sp, level, wallB, Direction.SOUTH, needle, InteractionHand.MAIN_HAND);
-        log(Folds.find(level, wallA, Direction.NORTH) != null, "l'aiguille coud le mur de l'atelier à la mine (" + r1 + ", " + r2 + ")");
+        Folds.End wallEnd = Folds.find(level, wallA, Direction.NORTH);
+        log(wallEnd != null, "l'aiguille coud le mur de l'atelier à la mine (" + r1 + ", " + r2 + ")");
+        if (wallEnd != null) {
+            // les outils du fil : teinture, étiquette, slime (deux fois : retour au fil ordinaire)
+            ItemStack dye = new ItemStack(Items.LIGHT_BLUE_DYE);
+            com.ourlet.event.ServerEvents.handleTool(sp, dye, wallEnd);
+            ItemStack tag = new ItemStack(Items.NAME_TAG);
+            //#if mc1201
+            //$$ tag.setHoverName(net.minecraft.network.chat.Component.literal("Mine"));
+            //#else
+            tag.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Mine"));
+            //#endif
+            com.ourlet.event.ServerEvents.handleTool(sp, tag, wallEnd);
+            com.ourlet.event.ServerEvents.handleTool(sp, new ItemStack(Items.SLIME_BALL), wallEnd);
+            boolean elastic = wallEnd.fold().tension() == Fold.ELASTIC;
+            com.ourlet.event.ServerEvents.handleTool(sp, new ItemStack(Items.SLIME_BALL), wallEnd);
+            log(wallEnd.fold().color() == Fold.DYE_BASE + net.minecraft.world.item.DyeColor.LIGHT_BLUE.getId()
+                && "Mine".equals(wallEnd.fold().name()) && elastic && wallEnd.fold().tension() == Fold.NORMAL,
+                "teinture, étiquette et slime sur une couture");
+        }
         // un second pli, pour les captures : le sol de l'atelier vers le plafond de la mine
         NeedleItem.sew(sp, level, new BlockPos(sx + 2, Y - 1, z0 + 1), Direction.UP, needle, InteractionHand.MAIN_HAND);
         NeedleItem.sew(sp, level, new BlockPos(mx - 2, Y + 3, z0 + 8), Direction.DOWN, needle, InteractionHand.MAIN_HAND);
@@ -376,6 +468,28 @@ public final class ServerSelfTest {
             Folds.anchor(level, new BlockPos(mx + 3, Y - 1, z0 + 10), Direction.UP, Direction.NORTH), 40);
         pocketWatch = true;
         pocketDeadline = level.getGameTime() + 60;
+
+        // la vitrine (pour l'animation de la description) : une grande couture cirée, du sol au plafond,
+        // où un mouton, une poule et de la laine tombent sans fin
+        for (int x = mx + 4; x <= mx + 7; x++) {
+            for (int z = z0 + 3; z <= z0 + 10; z++) {
+                set(level, x, Y - 1, z, Blocks.STONE);
+                set(level, x, Y + 3, z, Blocks.DEEPSLATE);
+                for (int y = Y; y <= Y + 2; y++) set(level, x, y, z, Blocks.AIR);
+            }
+        }
+        BlockPos vf = new BlockPos(mx + 5, Y - 1, z0 + 8), vc = new BlockPos(mx + 5, Y + 3, z0 + 8);
+        Fold vitrine = Folds.create(TESTER, Folds.anchor(level, vf, Direction.UP, Direction.NORTH),
+            Folds.anchor(level, vc, Direction.DOWN, Direction.NORTH), -1, 3);
+        Folds.setTension(vitrine, Fold.DAMPED);
+        Folds.recolor(vitrine, Fold.DYE_BASE + net.minecraft.world.item.DyeColor.MAGENTA.getId());
+        Compat.command(level, String.format(java.util.Locale.ROOT, "summon minecraft:sheep %d.5 %d %d.5 {Color:6b}", mx + 5, Y + 1, z0 + 8));
+        Compat.command(level, String.format(java.util.Locale.ROOT, "summon minecraft:chicken %d.5 %d %d.5", mx + 4, Y + 2, z0 + 9));
+        String[] wool = {"minecraft:pink_wool", "minecraft:light_blue_wool", "minecraft:yellow_wool", "minecraft:string"};
+        for (int i = 0; i < wool.length; i++) {
+            Compat.command(level, String.format(java.util.Locale.ROOT, "summon minecraft:item %.2f %.2f %.2f {Item:%s,PickupDelay:32767}",
+                mx + 4.4 + (i % 2) * 1.9, Y + 0.6 + i * 0.6, z0 + 7.5 + (i / 2) * 1.8, Compat.itemNbt(wool[i])));
+        }
 
         Compat.teleportPlayer(sp, level, sx + 0.5, Y, z0 + 1.5, 0f, 3f);
         var gaze = com.ourlet.fold.Gaze.describe(sp);

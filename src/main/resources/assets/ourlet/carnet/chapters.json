@@ -362,6 +362,359 @@
    ]
   },
   {
+   "id": "patchwork",
+   "icon": "ourlet:spool",
+   "steps": [
+    {
+     "frame": "patchwork_1",
+     "text": "ourlet.carnet.patchwork.1",
+     "ticks": 80,
+     "point": [
+      74.0,
+      48.0
+     ],
+     "items": [
+      {
+       "item": "ourlet:spool",
+       "path": [
+        [
+         92.0,
+         32.0
+        ],
+        [
+         80.0,
+         42.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "patchwork_2",
+     "text": "ourlet.carnet.patchwork.2",
+     "ticks": 80,
+     "point": [
+      134.0,
+      48.0
+     ],
+     "items": [
+      {
+       "item": "ourlet:spatial_needle",
+       "path": [
+        [
+         116.0,
+         34.0
+        ],
+        [
+         128.0,
+         44.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "patchwork_2",
+     "text": "ourlet.carnet.patchwork.3",
+     "ticks": 90,
+     "point": [
+      134.0,
+      48.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:minecart",
+       "path": [
+        [
+         114.0,
+         68.0
+        ],
+        [
+         74.0,
+         48.0
+        ],
+        null,
+        [
+         134.0,
+         48.0
+        ],
+        [
+         104.0,
+         64.0
+        ]
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "dyes",
+   "icon": "minecraft:light_blue_dye",
+   "steps": [
+    {
+     "frame": "dyes_0",
+     "text": "ourlet.carnet.dyes.1",
+     "ticks": 70,
+     "point": [
+      74.0,
+      62.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:light_blue_dye",
+       "path": [
+        [
+         92.0,
+         46.0
+        ],
+        [
+         79.0,
+         58.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "dyes_1",
+     "text": "ourlet.carnet.dyes.1",
+     "ticks": 50,
+     "point": [
+      146.0,
+      68.0
+     ]
+    },
+    {
+     "frame": "dyes_1",
+     "text": "ourlet.carnet.dyes.2",
+     "ticks": 90,
+     "point": [
+      146.0,
+      68.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:name_tag",
+       "path": [
+        [
+         126.0,
+         54.0
+        ],
+        [
+         140.0,
+         64.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "dyes_1",
+     "text": "ourlet.carnet.dyes.3",
+     "ticks": 70
+    }
+   ]
+  },
+  {
+   "id": "tension",
+   "icon": "minecraft:slime_ball",
+   "steps": [
+    {
+     "frame": "tension_0",
+     "text": "ourlet.carnet.tension.1",
+     "ticks": 90,
+     "point": [
+      158.0,
+      68.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:slime_ball",
+       "path": [
+        [
+         68.0,
+         22.0
+        ],
+        [
+         68.0,
+         62.0
+        ],
+        null,
+        [
+         158.0,
+         68.0
+        ],
+        [
+         214.0,
+         94.0
+        ],
+        [
+         228.0,
+         114.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "tension_1",
+     "text": "ourlet.carnet.tension.2",
+     "ticks": 90,
+     "point": [
+      158.0,
+      68.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:honeycomb",
+       "path": [
+        [
+         68.0,
+         22.0
+        ],
+        [
+         68.0,
+         62.0
+        ],
+        null,
+        [
+         158.0,
+         68.0
+        ],
+        [
+         164.0,
+         74.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "tension_2",
+     "text": "ourlet.carnet.tension.3",
+     "ticks": 100,
+     "point": [
+      92.0,
+      66.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:white_wool",
+       "path": [
+        [
+         92.0,
+         28.0
+        ],
+        [
+         92.0,
+         62.0
+        ],
+        null,
+        [
+         92.0,
+         28.0
+        ],
+        [
+         92.0,
+         62.0
+        ],
+        null,
+        [
+         92.0,
+         28.0
+        ],
+        [
+         92.0,
+         62.0
+        ]
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "hoppers",
+   "icon": "minecraft:hopper",
+   "steps": [
+    {
+     "frame": "hoppers_0",
+     "text": "ourlet.carnet.hoppers.1",
+     "ticks": 90,
+     "point": [
+      80.0,
+      58.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:iron_ingot",
+       "path": [
+        [
+         80.0,
+         38.0
+        ],
+        [
+         80.0,
+         58.0
+        ],
+        [
+         74.0,
+         62.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "hoppers_0",
+     "text": "ourlet.carnet.hoppers.2",
+     "ticks": 90,
+     "point": [
+      140.0,
+      64.0
+     ],
+     "items": [
+      {
+       "item": "minecraft:iron_ingot",
+       "path": [
+        [
+         80.0,
+         38.0
+        ],
+        [
+         80.0,
+         58.0
+        ],
+        [
+         74.0,
+         62.0
+        ],
+        null,
+        [
+         146.0,
+         68.0
+        ],
+        [
+         140.0,
+         64.0
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "frame": "hoppers_0",
+     "text": "ourlet.carnet.hoppers.3",
+     "ticks": 80,
+     "point": [
+      146.0,
+      68.0
+     ]
+    }
+   ]
+  },
+  {
    "id": "thimble",
    "icon": "ourlet:thimble",
    "steps": [

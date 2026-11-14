@@ -19,6 +19,12 @@ ADV = [  # id, parent, icône, cadre
     ("relay", "sew", "minecraft:diamond_pickaxe", "task"),
     ("snip", "sew", "minecraft:shears", "task"),
     ("pocket", "sew", "ourlet:thimble", "task"),
+    ("patchwork", "sew", "ourlet:spool", "task"),
+    ("haute_couture", "sew", "minecraft:magenta_dye", "task"),
+    ("named", "sew", "minecraft:name_tag", "task"),
+    ("spring", "pass", "minecraft:slime_ball", "task"),
+    ("delivery", "sew", "minecraft:hopper", "goal"),
+    ("loop", "pass", "minecraft:clock", "challenge"),
 ]
 
 

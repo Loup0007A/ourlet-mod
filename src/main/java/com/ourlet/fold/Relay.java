@@ -66,7 +66,7 @@ public final class Relay {
         if (dir.lengthSqr() < 1e-6) dir = player.getLookAngle();
         dir = dir.normalize();
         double left = Math.max(3.0, Compat.reach(player) - eye.distanceTo(hitOnFace));
-        Vec3 start = Fold.mapPoint(here, there, hitOnFace).add(there.normal().scale(0.002));
+        Vec3 start = end.fold().mapPoint(here, hitOnFace).add(there.normal().scale(0.002));
         Vec3 d2 = Fold.mapVector(here, there, dir).normalize();
         ServerLevel level = Folds.level(there);
         if (level == null) return null;

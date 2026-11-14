@@ -1,22 +1,33 @@
 package com.ourlet.event;
 
 import com.mojang.brigadier.Command;
+import com.ourlet.OurletConfig;
 import com.ourlet.fold.Anchor;
+import com.ourlet.fold.Effects;
 import com.ourlet.fold.Fold;
 import com.ourlet.fold.Folds;
 import com.ourlet.fold.Markers;
+import com.ourlet.fold.Progress;
 import com.ourlet.fold.Relay;
 import com.ourlet.fold.Transit;
 import com.ourlet.item.NeedleItem;
 import com.ourlet.platform.Compat;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
@@ -45,7 +56,7 @@ public final class ServerEvents {
 
     @SubscribeEvent
     public static void onAboutToStart(ServerAboutToStartEvent event) {
-        com.ourlet.OurletConfig.load();
+        OurletConfig.load();
         Folds.load(event.getServer());
     }
 
@@ -83,34 +94,94 @@ public final class ServerEvents {
         com.ourlet.debug.ServerSelfTest.tick(server);
     }
 
-    /** Clic droit sur une face cousue (sans l'aiguille) : l'action est faite de l'autre côté. */
+    /**
+     * Clic droit sur une face cousue (sans l'aiguille) : ciseaux, teinture, étiquette, slime et miel
+     * agissent sur le pli ; tout le reste est fait de l'autre côté (relais).
+     */
     @SubscribeEvent
     public static void onRightClick(PlayerInteractEvent.RightClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer player) || Relay.busy()) return;
-        var held = player.getItemInHand(event.getHand()).getItem();
+        ItemStack stack = player.getItemInHand(event.getHand());
+        Item held = stack.getItem();
         if (held instanceof NeedleItem || held instanceof com.ourlet.item.ThimbleItem) return;
         BlockHitResult hit = event.getHitVec();
         Folds.End end = Folds.find(Compat.level(player), hit.getBlockPos(), hit.getDirection());
         if (end == null) return;
-        if (held instanceof net.minecraft.world.item.ShearsItem) {
+        if (handleTool(player, stack, end)) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
-            snip(player, end);
             return;
         }
-        if (!end.open() || !com.ourlet.OurletConfig.relay) return; // pli fermé ou à sens unique dans l'autre sens : le bloc redevient un bloc
+        if (!end.open() || !OurletConfig.relay) return; // pli fermé ou à sens unique dans l'autre sens : le bloc redevient un bloc
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.SUCCESS);
         Relay.use(player, event.getHand(), end, hit.getLocation());
     }
 
-    /** Ciseaux : ouvert → sens unique (on entre par cette face) → fermé → ouvert. */
-    private static void snip(ServerPlayer player, Folds.End end) {
+    /** La teinture d'un objet (« minecraft:red_dye » → rouge), ou null. */
+    public static DyeColor dyeOf(ItemStack stack) {
+        String path = BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath();
+        if (!path.endsWith("_dye")) return null;
+        String name = path.substring(0, path.length() - 4);
+        for (DyeColor c : DyeColor.values()) if (c.getName().equals(name)) return c;
+        return null;
+    }
+
+    /** Les objets qui travaillent le fil lui-même. Renvoie vrai si l'objet a été utilisé. */
+    public static boolean handleTool(ServerPlayer player, ItemStack stack, Folds.End end) {
+        Item held = stack.getItem();
+        DyeColor dye = dyeOf(stack);
+        boolean shears = held instanceof net.minecraft.world.item.ShearsItem;
+        boolean tag = held == Items.NAME_TAG, slime = held == Items.SLIME_BALL, honey = held == Items.HONEYCOMB;
+        if (!shears && dye == null && !tag && !slime && !honey) return false;
         Fold f = end.fold();
         if (!Folds.mayEdit(player, f)) {
             Compat.actionBar(player, Component.translatable("ourlet.protected", Folds.ownerName(f)));
-            return;
+            return true;
         }
+        ServerLevel level = Compat.level(player);
+        if (shears) {
+            snip(player, end);
+            return true;
+        }
+        if (dye != null) {
+            int color = Fold.DYE_BASE + dye.getId();
+            if (color == f.color()) return true;
+            Folds.recolor(f, color);
+            for (Anchor a : new Anchor[]{f.a, f.b}) {
+                ServerLevel l = Folds.level(a);
+                if (l != null) Effects.dyed(l, f, a);
+            }
+            Compat.actionBar(player, Component.translatable("ourlet.dye.done", Component.translatable("ourlet.thread." + color)));
+            Progress.grant(player, "haute_couture");
+        } else if (tag) {
+            String name = Compat.customName(stack);
+            Folds.rename(f, name);
+            Effects.named(level, f, end.here());
+            Compat.actionBar(player, name == null ? Component.translatable("ourlet.name.cleared")
+                : Component.translatable("ourlet.name.done", name));
+            if (name != null) Progress.grant(player, "named");
+        } else {
+            int t = slime ? Fold.ELASTIC : Fold.DAMPED;
+            Folds.setTension(f, f.tension() == t ? Fold.NORMAL : t);
+            for (Anchor a : new Anchor[]{f.a, f.b}) {
+                ServerLevel l = Folds.level(a);
+                if (l != null) Effects.tension(l, f, a);
+            }
+            Compat.actionBar(player, Component.translatable(switch (f.tension()) {
+                case Fold.ELASTIC -> "ourlet.tension.elastic";
+                case Fold.DAMPED -> "ourlet.tension.damped";
+                default -> "ourlet.tension.normal";
+            }));
+            if (f.tension() == Fold.ELASTIC) Progress.grant(player, "spring");
+        }
+        if (!player.isCreative() && !shears) stack.shrink(1);
+        return true;
+    }
+
+    /** Ciseaux : ouvert → sens unique (on entre par cette face) → fermé → ouvert. */
+    private static void snip(ServerPlayer player, Folds.End end) {
+        Fold f = end.fold();
         boolean isA = end.here() == f.a;
         int next = switch (f.mode()) {
             case Fold.OPEN -> isA ? Fold.ONLY_A : Fold.ONLY_B;
@@ -124,8 +195,8 @@ public final class ServerEvents {
             default -> "ourlet.shears.one_way";
         };
         Compat.actionBar(player, Component.translatable(key));
-        com.ourlet.fold.Progress.grant(player, "snip");
-        com.ourlet.fold.Effects.snip(Compat.level(player), end.here(), f.color);
+        Progress.grant(player, "snip");
+        Effects.snip(Compat.level(player), f, end.here());
     }
 
     /** Casser un bloc cousu par sa face cousue : c'est le bloc d'en face qui cède. */
@@ -137,7 +208,7 @@ public final class ServerEvents {
     public static void onBreak(BlockEvent.BreakEvent event) {
     //#endif
         if (!(event.getPlayer() instanceof ServerPlayer player) || Relay.busy()) return;
-        if (Folds.all().isEmpty() || !com.ourlet.OurletConfig.relay) return;
+        if (Folds.all().isEmpty() || !OurletConfig.relay) return;
         BlockHitResult hit = Relay.pick(player);
         if (hit == null || !hit.getBlockPos().equals(event.getPos())) return;
         Folds.End end = Folds.find(Compat.level(player), event.getPos(), hit.getDirection());
@@ -147,12 +218,13 @@ public final class ServerEvents {
 
     /**
      * Un piston pousse une rangée de blocs contre une face cousue : le bloc de tête passe
-     * par le pli et ressort devant l'autre face. Le reste de la rangée avance normalement.
+     * par le pli et ressort devant l'autre face (devant le bloc correspondant, pour une grande
+     * couture). Le reste de la rangée avance normalement.
      */
     @SubscribeEvent
     public static void onPiston(PistonEvent.Pre event) {
         if (event.getPistonMoveType() != PistonEvent.PistonMoveType.EXTEND) return;
-        if (!(event.getLevel() instanceof ServerLevel level) || Folds.all().isEmpty() || !com.ourlet.OurletConfig.pistons) return;
+        if (!(event.getLevel() instanceof ServerLevel level) || Folds.all().isEmpty() || !OurletConfig.pistons) return;
         Direction dir = event.getDirection();
         BlockPos p = event.getPos().relative(dir);
         BlockPos last = null;
@@ -169,14 +241,14 @@ public final class ServerEvents {
                 //#endif
                 Anchor there = end.there();
                 ServerLevel thereLevel = Folds.level(there);
-                BlockPos out = there.pos().relative(there.face());
+                BlockPos out = end.fold().mapCell(end.here(), p).relative(there.face());
                 if (thereLevel == null || !thereLevel.getBlockState(out).canBeReplaced()) {
                     event.setCanceled(true); // la sortie est bouchée : le piston bute
                     return;
                 }
                 level.setBlock(last, Blocks.AIR.defaultBlockState(), 3);
                 thereLevel.setBlock(out, moved, 3);
-                com.ourlet.fold.Effects.transit(end.here(), there, end.fold().color, 1.0);
+                Effects.transit(end.fold(), end.here(), there, 1.0, 0.5);
                 return;
             }
             if (s.isAir() || s.canBeReplaced()) return;
@@ -210,12 +282,17 @@ public final class ServerEvents {
             for (Fold f : Folds.all()) {
                 if (!f.owner.equals(player.getUUID()) || f.temporary()) continue;
                 n++;
-                Component line = Component.translatable("ourlet.command.line", f.id, where(f.a), where(f.b),
-                    Component.translatable("ourlet.thread." + f.color), Component.translatable("ourlet.mode." + f.mode()));
+                int rgb = Effects.rgb(f.color());
+                MutableComponent line = Component.literal("⇄ ").withStyle(s -> s.withColor(rgb));
+                if (f.name() != null) line.append(Component.literal("« " + f.name() + " » ").withStyle(s -> s.withColor(rgb)));
+                line.append(Component.translatable("ourlet.command.line", f.id, where(f.a), where(f.b),
+                    Component.translatable("ourlet.thread." + f.color()), Component.translatable("ourlet.mode." + f.mode()))
+                    .withStyle(ChatFormatting.GRAY));
+                if (f.size > 1) line.append(Component.literal(" 3×3").withStyle(ChatFormatting.DARK_GRAY));
                 ctx.getSource().sendSuccess(() -> line, false);
             }
             final int count = n;
-            ctx.getSource().sendSuccess(() -> Component.translatable("ourlet.command.count", count, com.ourlet.OurletConfig.maxFolds), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("ourlet.command.count", count, OurletConfig.maxFolds), false);
             return Command.SINGLE_SUCCESS;
         })));
     }

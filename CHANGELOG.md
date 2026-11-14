@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.0.0 — Haute couture
+
+- **Grandes coutures 3×3** : une **Bobine** (2 planches + 1 ficelle) dans l'autre main, et l'aiguille coud un patchwork de 3×3 faces. Assez grand pour les chevaux, les bateaux, les wagonnets ; chaque carré mène à son jumeau.
+- **Teintures** : clic droit sur une couture avec l'une des 16 teintures, les deux bouts changent de couleur.
+- **Étiquettes** : une étiquette renommée donne un nom au pli. Il s'affiche quand on vise la couture, dans `/ourlet list`, et en titre à l'arrivée d'un long voyage.
+- **Slime et miel** : une boule de slime rend le fil élastique (on ressort 1,5 fois plus vite), un rayon de miel le cire (on ressort au ralenti). Une couture cirée au plafond, cousue au sol : une **chute sans fin**, tout en douceur.
+- **Entonnoirs** : un entonnoir tourné vers un bloc cousu envoie ses objets à travers le pli, directement dans le coffre (ou tonneau, entonnoir…) qui touche l'autre couture. Des tuyaux d'objets de n'importe quelle longueur, même entre deux dimensions.
+- **Le fil d'Ariane** : dé à coudre en main, une ligne de points montre la direction de la maison ; aiguille en main, celle du premier point en attente.
+- **Plus de style** : la couture se coud point par point (comme à la machine), gonfle quand quelque chose la traverse, aspire des lettres de la table d'enchantement ; un ruban de fil suit ce qui vient de passer ; un titre annonce la destination des longs voyages ; le froissement de tissu monte avec la vitesse.
+- **Boucles** : on peut maintenant retomber dans un pli dès qu'on en sort par l'autre bout (seule la face de sortie reste fermée un instant).
+- **Solidité et Raccommodage** s'appliquent à l'aiguille et au dé (à l'enclume).
+- Un onglet **Ourlet** dans le mode créatif.
+- **6 nouveaux progrès** (Patchwork, Haute couture, Cousu main, Ressort, Livraison express, Boucle infinie) — 15 en tout.
+- **Carnet de couture** : 4 nouveaux chapitres (grandes coutures, teintures et étiquettes, slime et miel, entonnoirs) — 11 en tout.
+- Les tronçons gardés chargés sont maintenant suivis un par un (un pli 3×3 à cheval sur deux tronçons les garde tous les deux).
+
+Haute couture: 3×3 patchwork seams (Spool), 16 dyes, name tags, slime (elastic) and honey (waxed, endless gentle falls), hoppers through folds, Ariadne's thread, sewing/ripple/glyph/trail animations, arrival titles, creative tab, 6 new advancements and 4 new notebook chapters.
+
 ## 1.2.0
 
 - **Regard à travers la couture** : vise une couture, la barre d'action dit où mène le pli (dimension, position, distance), son état (ouvert, sens unique, fermé, fermé par la redstone, temps restant d'un pli de poche) et le bloc que tu toucherais de l'autre côté.

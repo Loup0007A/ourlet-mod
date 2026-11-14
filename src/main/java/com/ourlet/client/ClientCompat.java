@@ -102,4 +102,18 @@ public final class ClientCompat {
         g.renderItem(stack, x, y);
         //#endif
     }
+
+    /** Cache ou montre l'interface (F1), pour des captures propres. */
+    public static void hideGui(boolean hide) {
+        //#if !mc26
+        mc().options.hideGui = hide;
+        //#endif
+    }
+
+    /** Vide la discussion à l'écran. */
+    public static void clearChat() {
+        //#if !mc26
+        mc().gui.getChat().clearMessages(false);
+        //#endif
+    }
 }

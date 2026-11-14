@@ -111,6 +111,14 @@ public class CarnetScreen extends Screen {
         this.parent = parent;
     }
 
+    /** Joue un chapitre depuis une étape (pour le test automatique). */
+    public void play(int chapter, int step) {
+        this.chapter = Math.floorMod(chapter, chapters().size());
+        this.step = step;
+        this.tick = 0;
+        this.paused = false;
+    }
+
     /** Pour le test automatique : va directement à une étape, à un moment donné. */
     public void jump(int chapter, int step, int tick) {
         this.chapter = Math.floorMod(chapter, chapters().size());

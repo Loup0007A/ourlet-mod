@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:hopper"
+    },
+    "title": {
+      "translate": "advancements.ourlet.delivery.title"
+    },
+    "description": {
+      "translate": "advancements.ourlet.delivery.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "ourlet:sew",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

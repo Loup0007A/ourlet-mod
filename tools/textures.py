@@ -34,6 +34,26 @@ THREADS = {
     'basting': ((246, 242, 228), (255, 255, 255), (120, 108, 92)),
 }
 
+# les seize teintures, en tons de coton à broder (même ordre que les teintures vanilla)
+DYES = [('white', 0xF4F1EA), ('orange', 0xE8873A), ('magenta', 0xC45BB8), ('light_blue', 0x7DB7E0),
+        ('yellow', 0xEDCB45), ('lime', 0x8CC04F), ('pink', 0xEE9DB5), ('gray', 0x6E6A68),
+        ('light_gray', 0xB3AEA8), ('cyan', 0x3C9EA6), ('purple', 0x8355B8), ('blue', 0x3F55A8),
+        ('brown', 0x8A5A3B), ('green', 0x4E7F3A), ('red', 0xC2413B), ('black', 0x2B2730)]
+
+
+def _shade(c, k):
+    return tuple(max(0, min(255, int(v * k))) for v in c)
+
+
+def _lift(c, k):
+    return tuple(min(255, int(v + (255 - v) * k)) for v in c)
+
+
+for _name, _hex in DYES:
+    _c = ((_hex >> 16) & 255, (_hex >> 8) & 255, _hex & 255)
+    _dark = _shade(_c, 0.55) if _name not in ('black', 'gray') else _lift(_c, 0.45)
+    THREADS[_name] = (_c, _lift(_c, 0.45) if _name != 'white' else (255, 255, 255), _dark)
+
 
 def rgba(c, a=255):
     return (c[0], c[1], c[2], a)
@@ -106,6 +126,38 @@ def thimble():
     for (x, y) in ((12, 5), (13, 4), (14, 4), (15, 5)):
         px[x, y] = rgba((246, 242, 228))
     return img
+
+
+def spool():
+    """La bobine : deux joues de bois, du fil rose enroulé, un brin qui pend."""
+    img = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    wood, wood_l, wood_d = (176, 124, 72), (214, 166, 108), (112, 74, 40)
+    rose, rose_l, rose_d = THREADS['rose']
+    for x in range(3, 13):  # joues haute et basse
+        for y in (2, 3, 12, 13):
+            c = wood_l if y in (2, 12) else wood_d
+            if x in (3, 12):
+                c = wood_d
+            px[x, y] = rgba(c)
+    for y in range(4, 12):  # le fil enroulé
+        for x in range(4, 12):
+            c = rose if (y + (x // 3)) % 2 else rose_l
+            if x == 4 or x == 11:
+                c = rose_d
+            px[x, y] = rgba(c)
+    for y in range(4, 12):  # l'axe qui dépasse à peine
+        px[7, y] = px[7, y] if (y % 3) else rgba(rose_d)
+    for (x, y) in ((12, 7), (13, 8), (13, 9), (14, 10), (14, 11), (13, 12)):  # le brin qui pend
+        px[x, y] = rgba(rose)
+    out = img.copy()  # contour
+    po = out.load()
+    for y in range(16):
+        for x in range(16):
+            if px[x, y][3] == 0 and any(0 <= x + dx < 16 and 0 <= y + dy < 16 and px[x + dx, y + dy][3]
+                                        for dx in (-1, 0, 1) for dy in (-1, 0, 1)):
+                po[x, y] = rgba(INK, 220)
+    return out
 
 
 # ───────────────────────── la couture (32×32, animée) ─────────────────────────
@@ -266,6 +318,7 @@ def save(img, path):
 if __name__ == '__main__':
     save(needle(), os.path.join(TEX, 'spatial_needle.png'))
     save(thimble(), os.path.join(TEX, 'thimble.png'))
+    save(spool(), os.path.join(TEX, 'spool.png'))
     for name in THREADS:
         save(seam(name), os.path.join(TEX, f'seam_{name}.png'))
         with open(os.path.join(TEX, f'seam_{name}.png.mcmeta'), 'w') as f:

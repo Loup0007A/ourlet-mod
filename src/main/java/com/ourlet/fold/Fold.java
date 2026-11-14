@@ -1,6 +1,11 @@
 package com.ourlet.fold;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.UUID;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -9,6 +14,7 @@ import net.minecraft.world.phys.Vec3;
  * Le passage est une rotation propre (comme un pas dans l'embrasure d'une porte) :
  * la normale entrante de la face d'entrée devient la normale sortante de la face de sortie,
  * le « haut » reste le haut, la « droite » s'inverse pour garder un repère direct.
+ * Une grande couture (bobine) fait 3×3 blocs de chaque côté.
  */
 public final class Fold {
 
@@ -21,29 +27,38 @@ public final class Fold {
     /** Fermé aux ciseaux (la couture reste, rien ne passe). */
     public static final int CLOSED = 3;
 
+    /** Tension du fil : normale, élastique (slime : on ressort plus vite), amortie (miel : on ressort au ralenti). */
+    public static final int NORMAL = 0, ELASTIC = 1, DAMPED = 2;
+
     /** Couleur du fil de bâti (plis de poche, temporaires). */
     public static final int BASTING = 4;
+    /** Première couleur de teinture : 5 + numéro de la teinture vanilla (blanc = 5 … noir = 20). */
+    public static final int DYE_BASE = 5;
 
     public final int id;
     public final UUID owner;
     public final Anchor a;
     public final Anchor b;
-    public final int color;
+    /** Côté de la couture, en blocs (1, ou 3 pour une grande couture). */
+    public final int size;
+    int color;
     /** Mode choisi aux ciseaux. */
     int mode = OPEN;
+    int tension = NORMAL;
+    /** Nom donné avec une étiquette (ou null). */
+    String name;
     /** Un des deux blocs reçoit un signal de redstone : le pli est fermé tant que ça dure. */
     boolean powered;
     /** Pli de poche (dé à coudre) : il se défait seul à ce tick ; -1 sinon. */
     long expires = -1;
-    /** Vrai si c'est Ourlet qui a forcé le chargement du tronçon de A / de B. */
-    boolean forcedA, forcedB;
 
-    Fold(int id, UUID owner, Anchor a, Anchor b, int color) {
+    Fold(int id, UUID owner, Anchor a, Anchor b, int color, int size) {
         this.id = id;
         this.owner = owner;
         this.a = a;
         this.b = b;
         this.color = color;
+        this.size = size;
     }
 
     public Anchor other(Anchor end) {
@@ -54,8 +69,20 @@ public final class Fold {
         return "ourlet_f" + id;
     }
 
+    public int color() {
+        return color;
+    }
+
     public int mode() {
         return mode;
+    }
+
+    public int tension() {
+        return tension;
+    }
+
+    public String name() {
+        return name;
     }
 
     public boolean powered() {
@@ -66,8 +93,21 @@ public final class Fold {
         return expires >= 0;
     }
 
+    public long expires() {
+        return expires;
+    }
+
     public boolean crossDimension() {
         return !a.dim().equals(b.dim());
+    }
+
+    /** Demi-côté de la couture (0,5 pour une couture simple, 1,5 pour une grande). */
+    public double half() {
+        return size / 2.0;
+    }
+
+    public List<BlockPos> cells(Anchor end) {
+        return end.cells(size);
     }
 
     /** Peut-on entrer dans le pli par ce bout ? */
@@ -97,30 +137,50 @@ public final class Fold {
 
     /**
      * Un point de la face {@code from} : sa position correspondante sur la face {@code to}.
-     * Les coordonnées dans la face sont bornées au carré de la face.
+     * Les coordonnées dans la face sont bornées au carré de la couture (demi-côté {@code half}).
      */
-    public static Vec3 mapPoint(Anchor from, Anchor to, Vec3 p) {
+    public static Vec3 mapPoint(Anchor from, Anchor to, Vec3 p, double half) {
         Vec3 d = p.subtract(from.center());
-        double u = clamp(d.dot(from.upVec())), r = clamp(d.dot(from.rightVec()));
+        double u = clamp(d.dot(from.upVec()), half), r = clamp(d.dot(from.rightVec()), half);
         return to.center().add(to.upVec().scale(u)).add(to.rightVec().scale(-r));
     }
 
-    private static double clamp(double v) {
-        return Math.max(-0.5, Math.min(0.5, v));
+    public Vec3 mapPoint(Anchor from, Vec3 p) {
+        return mapPoint(from, other(from), p, half());
+    }
+
+    /** Le bloc d'en face d'un bloc de la couture (même place dans le carré, droite inversée). */
+    public BlockPos mapCell(Anchor from, BlockPos cell) {
+        Anchor to = other(from);
+        int dx = cell.getX() - from.pos().getX(), dy = cell.getY() - from.pos().getY(), dz = cell.getZ() - from.pos().getZ();
+        var u = from.up();
+        var r = from.right();
+        int du = dx * u.getStepX() + dy * u.getStepY() + dz * u.getStepZ();
+        int dr = dx * r.getStepX() + dy * r.getStepY() + dz * r.getStepZ();
+        return to.pos().relative(to.up(), du).relative(to.right(), -dr);
+    }
+
+    private static double clamp(double v, double h) {
+        return Math.max(-h, Math.min(h, v));
     }
 
     String serialize() {
+        String n = name == null ? "" : URLEncoder.encode(name, StandardCharsets.UTF_8);
         return id + ";" + owner + ";" + a.dim() + ";" + a.serialize() + ";" + b.serialize() + ";" + color
-            + ";" + forcedA + ";" + forcedB + ";" + mode;
+            + ";false;false;" + mode + ";" + size + ";" + tension + ";" + n;
     }
 
-    static Fold parse(String line) {
-        String[] p = line.split(";");
+    /** Lit une ligne ; {@code legacyForced} reçoit les tronçons forcés par les versions d'avant 2.0. */
+    static Fold parse(String line, java.util.function.Consumer<Anchor> legacyForced) {
+        String[] p = line.split(";", -1);
+        int size = p.length > 9 && !p[9].isEmpty() ? Integer.parseInt(p[9]) : 1;
         Fold f = new Fold(Integer.parseInt(p[0]), UUID.fromString(p[1]), Anchor.parse(p[3], p[2]), Anchor.parse(p[4], p[2]),
-            Integer.parseInt(p[5]));
-        f.forcedA = Boolean.parseBoolean(p[6]);
-        f.forcedB = Boolean.parseBoolean(p[7]);
-        if (p.length > 8) f.mode = Integer.parseInt(p[8]);
+            Integer.parseInt(p[5]), size == 3 ? 3 : 1);
+        if (Boolean.parseBoolean(p[6])) legacyForced.accept(f.a);
+        if (Boolean.parseBoolean(p[7])) legacyForced.accept(f.b);
+        if (p.length > 8 && !p[8].isEmpty()) f.mode = Integer.parseInt(p[8]);
+        if (p.length > 10 && !p[10].isEmpty()) f.tension = Integer.parseInt(p[10]);
+        if (p.length > 11 && !p[11].isEmpty()) f.name = URLDecoder.decode(p[11], StandardCharsets.UTF_8);
         return f;
     }
 }
