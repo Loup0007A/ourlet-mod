@@ -48,9 +48,14 @@ public final class Transit {
     private static final Map<Long, Long> COOLDOWNS = new HashMap<>();
     /** Dernier tick où une entité touchait un bout (clé : entité + pli + bout). */
     private static final Map<Long, Long> CONTACT = new HashMap<>();
-    /** Mouvement des joueurs (le serveur ne connaît pas leur vitesse : on la déduit des positions). */
-    private static final Map<UUID, Vec3> LAST_POS = new HashMap<>();
+    /**
+     * Mouvement des joueurs : le serveur ne connaît pas leur vitesse, on la déduit de leurs dernières
+     * positions (la plus récente en tête). On fait la moyenne sur {@link #WINDOW} ticks : un serveur en
+     * retard reçoit les pas du client par paquets, et un seul tick pourrait compter trois pas d'un coup.
+     */
+    private static final Map<UUID, Deque<Vec3>> TRACK = new HashMap<>();
     private static final Map<UUID, Vec3> PLAYER_VEL = new HashMap<>();
+    private static final int WINDOW = 3;
     /** Les derniers passages de chaque joueur (pour « Boucle infinie »). */
     private static final Map<UUID, Deque<Long>> RECENT = new HashMap<>();
     private static final Map<UUID, Long> LAST_TITLE = new HashMap<>();
@@ -71,7 +76,7 @@ public final class Transit {
     public static void reset() {
         COOLDOWNS.clear();
         CONTACT.clear();
-        LAST_POS.clear();
+        TRACK.clear();
         PLAYER_VEL.clear();
         RECENT.clear();
         LAST_TITLE.clear();
@@ -87,10 +92,12 @@ public final class Transit {
     public static void trackPlayers(ServerLevel level) {
         for (ServerPlayer p : level.players()) {
             Vec3 now = p.position();
-            Vec3 last = LAST_POS.put(p.getUUID(), now);
-            Vec3 v = last == null ? Vec3.ZERO : now.subtract(last);
-            if (v.lengthSqr() > 16) v = Vec3.ZERO; // téléporté autrement
-            PLAYER_VEL.put(p.getUUID(), v);
+            Deque<Vec3> seen = TRACK.computeIfAbsent(p.getUUID(), u -> new ArrayDeque<>());
+            Vec3 last = seen.peekFirst();
+            if (last != null && now.distanceToSqr(last) > 16) seen.clear(); // téléporté autrement
+            seen.addFirst(now);
+            while (seen.size() > WINDOW + 1) seen.removeLast();
+            PLAYER_VEL.put(p.getUUID(), seen.size() < 2 ? Vec3.ZERO : now.subtract(seen.peekLast()).scale(1.0 / (seen.size() - 1)));
         }
     }
 
@@ -245,7 +252,9 @@ public final class Transit {
         Entity moved = e;
         if (e instanceof ServerPlayer p) {
             Compat.teleportPlayer(p, to, x, y, z, yaw, pitch);
-            LAST_POS.put(p.getUUID(), new Vec3(x, y, z));
+            Deque<Vec3> seen = new ArrayDeque<>();
+            seen.add(new Vec3(x, y, z));
+            TRACK.put(p.getUUID(), seen);
             PLAYER_VEL.put(p.getUUID(), v2);
             p.setDeltaMovement(v2);
             Compat.syncMotion(p);

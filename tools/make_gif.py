@@ -2,9 +2,10 @@
 """Monte l'animation de la description (curseforge/ourlet.gif) à partir des rafales du test client.
 
 Les images viennent de la branche ci-logs : main/forge-1.21.1/gif/gif_<scène>_<n>.jpg
-  a : on regarde un mur cousu, on marche dedans, on ressort à 3 000 blocs
-  b : la vitrine — une grande couture cirée où un mouton tombe sans fin
-  c : le Carnet de couture qui s'anime
+  a : on regarde un mur cousu, on marche dedans
+  b : on est ressorti à 3 000 blocs, face au mur de la mine
+  c : la tête tourne vers la vitrine — une grande couture cirée où un mouton tombe sans fin
+  d : le Carnet de couture qui s'anime
 Chaque scène reçoit une légende sur une bande de lin, le logo dans un coin, et un fondu au passage.
 
 Usage : python3 tools/make_gif.py <dossier des images> [sortie.gif]
@@ -19,9 +20,10 @@ W, H = 480, 270
 FRAME_MS = 100  # une capture toutes les 2 ticks
 
 SCENES = [  # (scène, première image, dernière image (exclue, None = jusqu'au bout), légende)
-    ('a', 24, None, 'Walk into a seam... and step out 3,000 blocks away'),
-    ('b', 2, None, 'Waxed seams: an endless, gentle fall'),
-    ('c', 0, None, 'Hold [W]: the Sewing Notebook explains everything'),
+    ('a', 24, None, 'Sew two blocks together, then walk into the seam...'),
+    ('b', 0, None, '...and step out 3,000 blocks away'),
+    ('c', 0, None, 'Waxed 3x3 seam: an endless, gentle fall'),
+    ('d', 0, None, 'Hold [W]: the Sewing Notebook explains everything'),
 ]
 LINEN = (237, 227, 207)
 INK = (58, 40, 38)

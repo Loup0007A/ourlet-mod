@@ -116,4 +116,23 @@ public final class ClientCompat {
         mc().gui.getChat().clearMessages(false);
         //#endif
     }
+
+    /** Cache la discussion (la barre d'action et les titres restent). */
+    public static void hideChat(boolean hide) {
+        mc().options.chatVisibility().set(hide ? net.minecraft.world.entity.player.ChatVisiblity.HIDDEN
+            : net.minecraft.world.entity.player.ChatVisiblity.FULL);
+    }
+
+    /** Vrai quand le tronçon de {@code pos} est arrivé du serveur et qu'il a été dessiné. */
+    public static boolean rendered(net.minecraft.core.BlockPos pos) {
+        Minecraft mc = mc();
+        if (mc.level == null || !mc.level.hasChunkAt(pos)) return false;
+        //#if mc26
+        //$$ return mc.levelRenderer.hasRenderedAllSections();
+        //#elif mc1201
+        //$$ return mc.levelRenderer.isChunkCompiled(pos);
+        //#else
+        return mc.levelRenderer.isSectionCompiled(pos);
+        //#endif
+    }
 }

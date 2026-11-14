@@ -9,6 +9,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -35,6 +36,11 @@ public final class ClientSelfTest {
     private static int inGame, waited, failures;
     private static double startX;
     private static BlockPos wall;
+    /** Où le joueur est ressorti, dans la mine. */
+    private static Vec3 arrival;
+    /** Un lent mouvement de caméra (pour l'animation). */
+    private static float panYaw0, panYaw1, panPitch0, panPitch1;
+    private static int panStart = -1, panTicks;
 
     private static Minecraft mc() {
         return Minecraft.getInstance();
@@ -84,6 +90,22 @@ public final class ClientSelfTest {
         p.yHeadRotO = yaw;
     }
 
+    /** Tourne la tête doucement vers (yaw, pitch) en {@code ticks} ticks. */
+    private static void pan(float yaw, float pitch, int ticks) {
+        var p = mc().player;
+        panYaw0 = p.getYRot();
+        panPitch0 = p.getXRot();
+        panYaw1 = yaw;
+        panPitch1 = pitch;
+        panTicks = ticks;
+        panStart = inGame;
+    }
+
+    /** Le centre de la vitrine (la grande couture cirée), à cinq blocs à l'est de la caméra. */
+    private static BlockPos vitrine() {
+        return BlockPos.containing(arrival.x + 5, arrival.y, Math.floor(arrival.z) + 3.5);
+    }
+
     private static void check(boolean ok, String what) {
         if (ok) Ourlet.LOGGER.info("[CLIENTTEST] ok : {}", what);
         else {
@@ -96,6 +118,7 @@ public final class ClientSelfTest {
         built = true;
         step("regarder le mur cousu", 1, () -> {
             look(0f, 3f);
+            if (GIF) com.ourlet.client.ClientCompat.hideChat(true);
             record("a");
         });
         step("capture de la couture", 30, () -> shot("01_seam_wall"));
@@ -114,25 +137,35 @@ public final class ClientSelfTest {
             look(0f, 3f);
             mc().options.keyUp.setDown(true);
         });
-        stepWhen("traverser le pli", () -> Math.abs(mc().player.getX() - startX) > 1000, 2, () -> {
+        stepWhen("traverser le pli", () -> Math.abs(mc().player.getX() - startX) > 1000, 1, () -> {
             mc().options.keyUp.setDown(false);
+            record(null);
+            arrival = mc().player.position();
             check(true, "le joueur a traversé le pli (" + (int) startX + " -> " + (int) mc().player.getX() + ")");
         });
-        step("arrivée", 34, () -> record(null));
-        step("regarder la vitrine", 4, () -> {
-            // la grande couture cirée où le mouton tombe sans fin : à droite, un peu en contrebas
-            look(-60f, 6f);
-            com.ourlet.client.ClientCompat.hideGui(true);
+        // à 3 000 blocs, le client attend ses tronçons : on ne filme qu'une fois la mine dessinée
+        stepWhen("la mine est dessinée", () -> waited > 240
+            || com.ourlet.client.ClientCompat.rendered(BlockPos.containing(arrival)) && com.ourlet.client.ClientCompat.rendered(vitrine()), 10, () -> {
+            var p = mc().player;
+            Ourlet.LOGGER.info("[CLIENTTEST] dans la mine : {} (arrivé en {})", p.position(), arrival);
+            // trois pas devant le mur de la mine, face à la couture par laquelle on est arrivé
+            p.connection.sendCommand(String.format(java.util.Locale.ROOT, "tp @s %.2f %.2f %.2f 180 3",
+                arrival.x, arrival.y, Math.floor(arrival.z) + 3.5));
+        });
+        step("face à la couture", 8, () -> {
+            look(180f, 3f);
             record("b");
         });
-        step("fin de la vitrine", 90, () -> {
+        step("vers la vitrine", 24, () -> {
+            // puis on tourne la tête vers la grande couture cirée où le mouton tombe sans fin
+            record("c");
+            pan(270f, 7f, 36);
+        });
+        step("fin de la vitrine", 36 + 64, () -> {
             record(null);
-            com.ourlet.client.ClientCompat.hideGui(false);
             shot("07_endless_fall");
         });
-        step("de l'autre côté", 20, () -> {
-            look(180f, 10f);
-        });
+        step("de l'autre côté", 2, () -> look(180f, 3f));
         step("capture de l'autre côté", 20, () -> shot("03_other_side"));
         step("ouvrir le carnet", 5, () -> {
             check(com.ourlet.client.CarnetScreen.chapters().size() == 11, "le carnet a 11 chapitres");
@@ -140,7 +173,7 @@ public final class ClientSelfTest {
             if (GIF) sc.play(1, 0);
             else sc.jump(1, 0, 34);
             com.ourlet.client.ClientCompat.open(sc);
-            record("c");
+            record("d");
         });
         step("feuilleter le carnet", GIF ? 80 : 1, () -> record(null));
         step("capture du carnet (passage)", 2, () -> {
@@ -192,6 +225,12 @@ public final class ClientSelfTest {
         if (!built) {
             build();
             Ourlet.LOGGER.info("[CLIENTTEST] début ({} étapes)", STEPS.size());
+        }
+        if (panStart >= 0) {
+            float t = Math.min(1f, (inGame - panStart) / (float) panTicks);
+            float e = t * t * (3 - 2 * t);
+            look(panYaw0 + (panYaw1 - panYaw0) * e, panPitch0 + (panPitch1 - panPitch0) * e);
+            if (t >= 1f) panStart = -1;
         }
         if (rec != null && inGame % 2 == 0) shot(String.format("gif_%s_%03d", rec, recN++));
         Step s = STEPS.peek();

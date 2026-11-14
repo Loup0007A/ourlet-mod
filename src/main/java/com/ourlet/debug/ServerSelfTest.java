@@ -426,7 +426,7 @@ public final class ServerSelfTest {
         BlockPos wallB = new BlockPos(mx, Y + 1, z0 + 4);
         ore = new BlockPos(mx, Y + 1, z0 + 6);
         set(level, ore.getX(), ore.getY(), ore.getZ(), Blocks.DIAMOND_ORE);
-        set(level, mx + 2, Y, z0 + 8, Blocks.GLOWSTONE);
+        set(level, mx - 3, Y, z0 + 10, Blocks.GLOWSTONE);
 
         // les plis sont cousus avec la vraie aiguille, par le joueur
         ItemStack needle = new ItemStack(OurletItems.NEEDLE.get());
