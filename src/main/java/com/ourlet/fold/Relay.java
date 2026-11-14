@@ -152,6 +152,7 @@ public final class Relay {
             e -> (e instanceof ItemEntity || e instanceof ExperienceOrb) && e.tickCount <= 2);
         for (Entity e : drops) {
             e.teleportTo(at.x, at.y - e.getBbHeight() / 2, at.z);
+            e.setOldPosAndRot();
             e.setDeltaMovement(n.scale(0.12));
             Compat.syncMotion(e);
         }

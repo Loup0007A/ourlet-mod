@@ -89,9 +89,9 @@ def seam(name, frames=8):
             for x in range(32):
                 edge = min(x, y, 31 - x, 31 - y)
                 weave = (x + y) % 2 == 0
-                a = 70 if weave else 40
-                if edge < 3:
-                    a = 150
+                a = 105 if weave else 70
+                if edge < 4:
+                    a = 210
                 c = LINEN if weave else LINEN_D
                 px[x, y] = rgba(c, a)
         # le pli : des points avant qui convergent vers le centre et glissent vers lui
@@ -105,8 +105,12 @@ def seam(name, frames=8):
                 for d in (0.0, 0.8, 1.6):
                     x = int(round(cx + math.cos(ang) * (r - d)))
                     y = int(round(cy + math.sin(ang) * (r - d)))
-                    if 3 <= x <= 28 and 3 <= y <= 28:
-                        px[x, y] = rgba(main if s % 2 else light, 230)
+                    if 4 <= x <= 27 and 4 <= y <= 27:
+                        px[x, y] = rgba(main if s % 2 else light, 255)
+                        # ombre du fil, d'un pixel, pour qu'il se lise sur un bloc clair
+                        sx_, sy_ = x + 1, y + 1
+                        if 4 <= sx_ <= 27 and 4 <= sy_ <= 27 and px[sx_, sy_][:3] in (LINEN, LINEN_D):
+                            px[sx_, sy_] = rgba(dark, 200)
         # le cœur du pli : une fronce sombre
         for (x, y) in ((15, 15), (16, 16), (15, 16), (16, 15)):
             px[x, y] = rgba(dark, 255)
@@ -120,6 +124,11 @@ def seam(name, frames=8):
                         px[x0 + i, y0 + i] = rgba(main)
                     if 0 <= x0 + 2 - i < 32 and 0 <= y0 + i < 32:
                         px[x0 + 2 - i, y0 + i] = rgba(light if i == 1 else main)
+        # un point arrière sombre qui borde la gaze
+        for t in range(4, 28):
+            if t % 3 != 2:
+                for (x, y) in ((t, 4), (t, 27), (4, t), (27, t)):
+                    px[x, y] = rgba(dark, 235)
         # quatre nœuds aux coins
         for (x, y) in ((1, 1), (29, 1), (1, 29), (29, 29)):
             for dx in range(2):

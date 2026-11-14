@@ -192,6 +192,8 @@ public final class Transit {
             e.setYHeadRot(yaw);
             e.yRotO = yaw;
             e.xRotO = pitch;
+            // sinon les projectiles « balaient » depuis leur ancienne position et heurtent la face d'entrée
+            e.setOldPosAndRot();
             e.setDeltaMovement(v2);
             Compat.syncMotion(e);
         }

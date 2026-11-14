@@ -47,6 +47,11 @@ public final class ClientSelfTest {
     private static void shot(String name) {
         Minecraft mc = mc();
         //#if mc26
+        //$$ mc.gui.toastManager().clear();
+        //#else
+        mc.getToasts().clear();
+        //#endif
+        //#if mc26
         //$$ Screenshot.grab(mc.gameDirectory, name + ".png", mc.gameRenderer.mainRenderTarget(), 1,
         //$$     c -> Ourlet.LOGGER.info("[CLIENTTEST] capture {}", name));
         //#else

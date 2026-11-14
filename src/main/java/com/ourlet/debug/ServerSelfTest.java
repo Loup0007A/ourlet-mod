@@ -144,8 +144,11 @@ public final class ServerSelfTest {
             set(level, piston.getX(), Y + 1, sz, Blocks.REDSTONE_BLOCK);
             CHECKS.add(new Check("l'objet ressort à 1 500 blocs, poussé vers l'est", t + 40, () ->
                 item.isAlive() && item.getX() > b1.getX() + 1 && item.getX() < b1.getX() + 12 && Math.abs(item.getZ() - sz - 0.5) < 1.5));
-            CHECKS.add(new Check("la flèche ressort du sol, vers le haut", t + 22, () ->
-                arrow != null && Math.abs(arrow.getX() - b2.getX() - 0.5) < 1.5 && arrow.getY() > b2.getY() + 1));
+            CHECKS.add(new Check("la flèche ressort du sol, vers le haut", t + 22, () -> {
+                if (arrow == null) return false;
+                Ourlet.LOGGER.info("[SELFTEST] flèche en {} (vitesse {})", arrow.position(), arrow.getDeltaMovement());
+                return Math.abs(arrow.getX() - b2.getX() - 0.5) < 1.5 && arrow.getY() > b2.getY() + 1;
+            }));
             CHECKS.add(new Check("le piston a poussé la pierre taillée à travers le pli", t + 40, () ->
                 level.getBlockState(out3).is(Blocks.COBBLESTONE)));
             CHECKS.add(new Check("les coutures sont visibles (6 affichages)", t + 40, () ->
