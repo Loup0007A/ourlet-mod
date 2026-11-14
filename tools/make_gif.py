@@ -6,7 +6,7 @@ Les images viennent de la branche ci-logs : main/forge-1.21.1/gif/gif_<scène>_<
   b : on est ressorti à 3 000 blocs, face au mur de la mine
   c : la tête tourne vers la vitrine — une grande couture cirée où un mouton tombe sans fin
   d : le Carnet de couture qui s'anime
-Chaque scène reçoit une légende sur une bande de lin, le logo dans un coin, et un fondu au passage.
+Chaque plan reçoit une légende sur une bande de lin (avec le logo), et un fondu au passage.
 
 Usage : python3 tools/make_gif.py <dossier des images> [sortie.gif]
 """
@@ -19,11 +19,12 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 W, H = 480, 270
 FRAME_MS = 100  # une capture toutes les 2 ticks
 
-SCENES = [  # (scène, première image, dernière image (exclue, None = jusqu'au bout), légende)
-    ('a', 24, None, 'Sew two blocks together, then walk into the seam...'),
-    ('b', 0, None, '...and step out 3,000 blocks away'),
-    ('c', 0, None, 'Waxed 3x3 seam: an endless, gentle fall'),
-    ('d', 0, None, 'Hold [W]: the Sewing Notebook explains everything'),
+SCENES = [  # (scène, première image, dernière image (exclue, None = jusqu'au bout), légende, fondu avant)
+    ('a', 26, None, 'Walk into a seam...', True),
+    ('b', 2, None, '...and step out 3,000 blocks away', True),
+    ('c', 0, 9, '...and step out 3,000 blocks away', False),  # la caméra tourne : même plan, sans fondu
+    ('c', 9, None, 'Waxed 3x3 seam: an endless, gentle fall', False),
+    ('d', 0, 30, 'Hold [W]: the Sewing Notebook explains everything', True),
 ]
 LINEN = (237, 227, 207)
 INK = (58, 40, 38)
@@ -40,15 +41,19 @@ def font(size):
     return ImageFont.load_default()
 
 
-def caption(img, text, f):
-    """Une bande de lin en bas de l'image, bordée d'un point avant rose, avec la légende."""
+BAND = 28
+
+
+def caption(img, text, f, mark):
+    """Une bande de lin en bas de l'image, bordée d'un point avant rose : le logo à gauche, la légende au centre."""
     d = ImageDraw.Draw(img)
-    band = 26
-    d.rectangle([0, H - band, W, H], fill=LINEN)
+    d.rectangle([0, H - BAND, W, H], fill=LINEN)
     for x in range(4, W, 8):
-        d.line([(x, H - band + 2), (x + 4, H - band + 2)], fill=ROSE, width=1)
+        d.line([(x, H - BAND + 2), (x + 4, H - BAND + 2)], fill=ROSE, width=1)
+    if mark is not None:
+        img.paste(mark, (6, H - BAND + 3), mark)
     tw = d.textlength(text, font=f)
-    d.text(((W - tw) / 2, H - band + 6), text, fill=INK, font=f)
+    d.text(((W - tw) / 2, H - BAND + 8), text, fill=INK, font=f)
     return img
 
 
@@ -56,7 +61,7 @@ def logo():
     p = os.path.join(ROOT, 'curseforge', 'avatar.png')
     if not os.path.exists(p):
         return None
-    return Image.open(p).convert('RGBA').resize((46, 46), Image.LANCZOS)
+    return Image.open(p).convert('RGBA').resize((BAND - 4, BAND - 4), Image.LANCZOS)
 
 
 def load(folder, scene, start, end):
@@ -76,33 +81,29 @@ def load(folder, scene, start, end):
 def main(folder, out):
     f = font(13)
     mark = logo()
-    timeline = []
-    for scene, start, end, text in SCENES:
+    timeline = []  # [image sans légende, durée, légende]
+    for scene, start, end, text, fade in SCENES:
         frames = load(folder, scene, start, end)
         if not frames:
             print(f'scène {scene} : aucune image')
             continue
-        decorated = []
-        for im, ms in frames:
-            im = caption(im.copy(), text, f)
-            if mark is not None:
-                im.paste(mark, (8, 8), mark)
-            decorated.append([im, ms])
-        if timeline:
-            # fondu enchaîné de trois images entre deux scènes
+        if timeline and fade:
+            # fondu enchaîné de trois images entre deux plans (la légende change tout de suite)
             prev = timeline[-1][0]
             for k in (0.25, 0.5, 0.75):
-                timeline.append([Image.blend(prev, decorated[0][0], k), 60])
-        timeline.extend(decorated)
+                timeline.append([Image.blend(prev, frames[0][0], k), 60, text])
+        timeline.extend([im, ms, text] for im, ms in frames)
         print(f'scène {scene} : {len(frames)} images, {sum(ms for _, ms in frames) / 1000:.1f} s')
     if not timeline:
         sys.exit('aucune image')
     timeline[-1][1] += 600  # un temps d'arrêt avant de recommencer
-    pal = [im.quantize(colors=160, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.FLOYDSTEINBERG)
-           for im, _ in timeline]
-    pal[0].save(out, save_all=True, append_images=pal[1:], duration=[ms for _, ms in timeline], loop=0,
+    # octree : garde les couleurs vives des coutures (median cut les grise)
+    pal = [caption(im.copy(), text, f, mark).quantize(colors=256, method=Image.Quantize.FASTOCTREE,
+                                                      dither=Image.Dither.FLOYDSTEINBERG)
+           for im, _, text in timeline]
+    pal[0].save(out, save_all=True, append_images=pal[1:], duration=[ms for _, ms, _ in timeline], loop=0,
                 optimize=True, disposal=1)
-    print(f'{out} : {len(timeline)} images, {sum(ms for _, ms in timeline) / 1000:.1f} s, '
+    print(f'{out} : {len(timeline)} images, {sum(ms for _, ms, _ in timeline) / 1000:.1f} s, '
           f'{os.path.getsize(out) / 1e6:.1f} Mo')
 
 

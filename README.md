@@ -4,6 +4,8 @@
 
 *Un ourlet, c'est un bord de tissu replié puis cousu. Ici, le tissu, c'est le monde.*
 
+<p align="center"><img src="curseforge/ourlet.gif" alt="Ourlet en action : on marche dans une couture, on ressort à 3 000 blocs ; une couture cirée 3×3 où un mouton tombe sans fin ; le Carnet de couture"></p>
+
 L'**Aiguille Spatiale** coud l'espace entre deux faces de blocs, n'importe où dans une dimension.
 Il n'y a ni portail ni nouveau bloc : seulement une couture brodée sur deux blocs qui existent déjà.
 
